@@ -1,0 +1,175 @@
+{% extends "trs_base.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Fill Remittance Details</h1>
+
+    <form method="POST" id="remittance_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <br>
+
+        <!--  Enter ROE -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>ROE on date of payment</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" name="roe_on_date_of_payment" id="roe_on_date_of_payment" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!-- Amount Including Extra Charges -->
+         <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Total Amount Released in Member currency</strong></label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" name="total_amount_released_in_member_currency" id="total_amount_released_in_member_currency" step="0.001"
+                       value="{{ total_amount_to_be_released_in_member_currency }}" required />
+            </div>
+         </div>
+        <br>
+
+        <!--  Enter Bid-Ask Spread -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Bid-Ask Spread</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" name="bid_ask_spread" id="bid_ask_spread" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!--  Enter Total Booking Cost -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Total Booking Cost</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" name="transaction_cost" id="transaction_cost" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!-- Select Remit Type -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Remit Type</strong> : </label>
+            </div>
+            <div class="col-md-3">
+                {{ remit_type_form.remit_type }}
+            </div>
+        </div>
+        <br>
+
+        <!-- Enter Remit Type Cost -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Total Remit Type Cost</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" name="remit_type_cost" id="remit_type_cost" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!--  Enter Date of Payment -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Date of Payment</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" value="{{ currentDate }}" id="date_of_payment" name="date_of_payment" />
+            </div>
+        </div>
+        <br>
+
+        <!-- Select Remittance Provider -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Remittance Provider</strong> : </label>
+            </div>
+            <div class="col-md-3">
+                {{ remittance_provider_form.remittance_provider }}
+            </div>
+        </div>
+        <br>
+
+        <!-- Select SCE -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>SCE</strong> : </label>
+            </div>
+            <div class="col-md-3">
+                {{ travel_supply_group_entity_form.travel_supply_group_entity }}
+            </div>
+        </div>
+        <br>
+
+        <!-- Select SCE Currency -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>SCE Currency</strong> : </label>
+            </div>
+            <div class="col-md-3">
+                {{ currency_form.currency }}
+            </div>
+        </div>
+        <br>
+
+        <!--  Enter UTR / Booking Number-->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>UTR / Booking Number</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" name="utr_or_transaction_no" id="utr_or_transaction_no" required />
+            </div>
+        </div>
+        <br>
+
+        <!--  Enter Proof -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Proof of Payment</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <p>{{ release_req_form.proof }}</p>
+            </div>
+        </div>
+        <br>
+
+        <!-- Enter Release Note -->
+         <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Release Note</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <p>{{ release_req_form.release_notes }}</p>
+            </div>
+         </div>
+        <br>
+
+        <div class="row mt-2">
+            <div class="col-md-3"></div>
+            <div class="col-md-5">
+                <button type="submit" class="btn btn-success btn-sm">Submit</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#date_of_payment").datepicker({
+            dateFormat: "yy-mm-dd",
+        })
+        var date = new Date();
+        document.getElementById('date_of_payment').value = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,220 @@
+{% block content %}
+<style>
+    body {
+        background: #f3f6fb;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .container-lite {
+        max-width: 1100px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+    .mark-water {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 28px;
+        color: rgba(0,0,0,0.05);
+        font-weight: bold;
+    }
+
+    .heading-top {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .flex-row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .flex-label {
+        width: 230px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .flex-value a {
+        color: #2f6fed;
+        text-decoration: none;
+    }
+
+    .flex-value a:hover {
+        text-decoration: underline;
+    }
+
+    .section-box {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th {
+        background: #eef2f7;
+        padding: 10px;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    table td {
+        padding: 10px;
+    }
+
+    .btn-action {
+        margin-top: 20px;
+        background: #2f6fed;
+        border: none;
+        padding: 10px 25px;
+        color: white;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .btn-action:hover {
+        background: #1d4ed8;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #777;
+        font-size: 13px;
+    }
+</style>
+
+<div class="container-lite">
+    <div class="mark-water">{{ release_request_obj.member.code }}</div>
+
+    <h2 class="heading-top">Release Request : Bank Transfer</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="flex-row">
+            <div class="flex-label">Member</div>
+            <div class="flex-value">
+                <a href="{% url 'admin:members_member_change' release_request_obj.member.id %}">
+                    {{ release_request_obj.member }}
+                </a>
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Organization</div>
+            <div class="flex-value">
+                <input type="hidden" value="{{ wallet_obj.currency.symbol }}">
+                <a href="{% url 'admin:members_organization_change' wallet_obj.organization.id %}">
+                    {{ wallet_obj.organization }}
+                </a>
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Requested Currency</div>
+            <div class="flex-value">
+                {{ release_request_obj.requested_currency.symbol }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Requested Amount</div>
+            <div class="flex-value">
+                {{ release_request_obj.requested_amount }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Release Date</div>
+            <div class="flex-value">
+                {{ release_request_obj.to_be_released_on }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Description</div>
+            <div class="flex-value">
+                {{ release_request_obj.description }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Created At</div>
+            <div class="flex-value">
+                {{ release_request_obj.created_at }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Proof</div>
+            <div class="flex-value">
+                {{ release_req_form.proof }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Amount Released</div>
+            <div class="flex-value">
+                {{ release_req_form.amount_released_including_charges }}
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="flex-label">Release Note</div>
+            <div class="flex-value">
+                {{ release_req_form.release_notes }}
+            </div>
+        </div>
+
+        <div class="section-box">
+            <strong>Actual Payment Details</strong>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking Link</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in actual_payment_objs %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'admin:bms_booking_change' item.booking.id %}">
+                                {{ item.booking.code }}
+                            </a>
+                        </td>
+                        <td>{{ item.member_currency.symbol }}</td>
+                        <td>{{ item.amount }}</td>
+                        <td>{{ item.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align:center;">
+            <button type="submit" class="btn-action">Confirm</button>
+        </div>
+
+    </form>
+</div>
+
+<div class="footer">
+    © DMC Man | Made in 🇮🇳 India
+</div>
+
+{% endblock %}

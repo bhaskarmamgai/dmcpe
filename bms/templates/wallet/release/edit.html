@@ -1,0 +1,158 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Create a Release Request</h1>
+    <!-- Member Dropdown -->
+    <form method="POST" id="select_service_form">
+        {% csrf_token %}
+        <!-- Select Service -->
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Search Service</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.service }}
+            </div>
+        </div>
+        <br>
+        <!-- Select Organization -->
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Search Organization</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.organization }}
+            </div>
+        </div>
+        <!-- Select Member -->
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Search Member</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.member }}
+            </div>
+        </div>
+        <!-- Due Date -->
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Select Due Date</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                <input type="date" value="{{ date|date:'Y-m-d' }}" name="selected_due_date" id="selected_due_date_id"
+                       required/>
+            </div>
+        </div>
+        <br>
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Booking Start Date</strong> : </label>
+            </div>
+            <div class="col-md-2">
+                <input type="date" value="{{ date|date:'Y-m-d' }}" name="booking_start_date" id="booking_start_date_id"
+                       required/>
+            </div>
+            <div class="col-md-2">
+                <label><strong>Booking End Date</strong> : </label>
+            </div>
+            <div class="col-md-2">
+                <input type="date" value="{{ date|date:'Y-m-d' }}" name="booking_end_date" id="booking_end_date_id"
+                       required/>
+            </div>
+        </div>
+        <br>
+        <div class="ml-4 mt-4"> <h4> Optional Filters* </h4> </div>
+        <br><br>
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Vendor Organization</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.vendor_organization }}
+            </div>
+        </div>
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Destination</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.destination }}
+            </div>
+        </div>
+
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Type</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.type }}
+            </div>
+        </div>
+
+        <div class="container row">
+            <div class="col-md-2">
+                <label><strong>Category</strong> : </label>
+            </div>
+            <div class="col-md-4">
+                {{ form.category }}
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-2"></div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-success btn-sm">Select Booking</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+        $( document ).ready(function() {
+            // To Prevent submit without selecting Service
+            $("#id_service").addClass("form-control");
+            $("#select_service_form").submit(function(event) {
+                id_service = $("#id_service").val()
+                if ((id_service==="undefined") || (id_service=="")) { 
+                    alert("Please Select Service")
+                    event.preventDefault();
+                }
+                member_id = $("#id_member").val()
+                if ((member_id==="undefined") || (member_id=="")) {
+                alert("Please Select Member")
+                event.preventDefault();
+                }
+                member_id = $("#id_organization").val()
+                if ((id_organization==="undefined") || (id_organization=="")) {
+                alert("Please Select Organization")
+                event.preventDefault();
+                }
+            });
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1; //January is 0!
+            var yyyy = today.getFullYear();
+             if(dd<10){
+                    dd='0'+dd
+                } 
+                if(mm<10){
+                    mm='0'+mm
+                } 
+            today = yyyy+'-'+mm+'-'+dd;
+            document.getElementById("selected_due_date_id").setAttribute("min", today);
+            var oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+            var dd_week_ago = oneWeekAgo.getDate();
+            var mm_one_week_ago = oneWeekAgo.getMonth()+1;
+            var yyyy_one_week_ago = oneWeekAgo.getFullYear();
+            if(dd_week_ago<10){
+                    dd_week_ago='0'+dd_week_ago
+                }
+                if(mm_one_week_ago<10){
+                    mm_one_week_ago='0'+mm_one_week_ago
+                }
+            date_one_week_ago = yyyy_one_week_ago+'-'+mm_one_week_ago+'-'+dd_week_ago;
+            document.getElementById("booking_start_date_id").defaultValue = date_one_week_ago
+            document.getElementById("booking_end_date_id").max = today;
+            }); 
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "trs_base.html" %}
+{% block content %}
+    <div class="container">
+        <h1>Select Service</h1>
+        <!-- Member Dropdown -->
+        <form method="POST" id="select_service_form">
+            {% csrf_token %}
+            <!-- Select Member -->
+            <div class="cantainer row">
+                <div class="col-md-2">
+                    <label><strong>Search Service</strong> : </label>
+                </div>
+                <div class="col-md-4">
+                    {{ form.service }}
+                </div>
+            </div>
+            <br>
+            <div class="cantainer row">
+                <div class="col-md-2">
+                    <label><strong>Comment</strong> : </label>
+                </div>
+                <div class="col-md-4">
+                    <input name='comment' type="text" class="form-control form-control">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4"><button class="btn btn-success btn-sm">Select Buyer</button></div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            // To Prevent submit without selecting Service
+            $("#id_service").addClass("form-control");
+            $("#select_service_form").submit(function(event) {
+                id_service = $("#id_service").val()
+                if ((id_service==="undefined") || (id_service=="")) { 
+                    alert("Please Select Service")
+                    event.preventDefault();
+                }
+            });
+            $("#select_service_form").submit(function(event) {
+            window.onunload = function(){
+            window.opener.location.reload();
+            }
+        }); 
+        });
+    </script>
+{% endblock %}

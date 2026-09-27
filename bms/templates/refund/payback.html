@@ -1,0 +1,38 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<script src="https://cdn.ckeditor.com/4.13.1/full-all/ckeditor.js"></script>
+<style type="text/css">
+	td{
+		text-align: center;
+	}
+	tr>th{
+		text-align: center;
+	}
+</style>
+<h1>PayBack To Wallet</h1>
+{% if messages %}
+<div class="span12">
+{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message|safe }}
+    </div>
+{% endfor %}
+</div>
+{% endif %}
+<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">Remarks</label>
+    <input type="text" name="remarks" class="form-control" id="remarks" required>
+  </div>
+  <div class="form-group">
+    <label for="exampleFormControlFile1">Proof</label>
+    <input type="file" name="proof" class="form-control-file" id="proof" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script type="text/javascript">
+    document.getElementById('remarks').value="{{ saved_data.remarks }}"
+    document.getElementById('proof').files="{{ saved_data.proof }}"
+</script>
+{% endblock %}

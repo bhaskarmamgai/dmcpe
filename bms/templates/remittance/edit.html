@@ -1,0 +1,154 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            <strong><h1>Generate A2Form</h1></strong>
+        </div>
+    </div>
+    <h2>A2 Form Details:</h2>
+    <hr>
+    <!-- Remittance Provider -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Remittance Provider:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{remittance_provider_form.remittance_provider }}
+        </div>
+    </div>
+    <br>
+    <!-- Remittance Charges -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Remittance Charges:</strong></label>
+        </div>
+        <div class="col-md-8">
+            <input type="number" step=".01" name="remittance_charges" value="{{ remittance_charges }}" min="0" required/>
+        </div>
+    </div>
+    <!-- Release Request Details -->
+    <h2>Release Request Details:</h2>
+    <hr>
+    <!-- Release Request Link -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Release Request:</strong></label>
+        </div>
+        <div class="col-md-8">
+            <a href="{% url 'admin:trs_releaserequest_change' release_request_obj.id %}">{{ release_request_obj }}</a>
+        </div>
+    </div>
+    <!-- Bank Account -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Bank Account :</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.bank_account }}
+        </div>
+    </div>
+    <!-- Release Notes -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Release notes:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.release_notes }}
+        </div>
+    </div>
+    <!-- Member -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Member:</strong></label>
+        </div>
+        <div class="col-md-8">
+            <a href="{% url 'admin:members_member_change' release_request_obj.member.id %}">{{ release_request_obj.member }}</a>
+        </div>
+    </div>
+    <!-- Requested Amount -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Requested Amount:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.requested_amount }}
+        </div>
+    </div>
+    <!-- To be Releases On -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>To be released on:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.to_be_released_on }}
+        </div>
+    </div>
+    <!-- Description -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Description:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.description }}
+        </div>
+    </div>
+    <!-- Created At -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Created At:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.created_at }}
+        </div>
+    </div>
+    <!-- Created By -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Created By:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.created_by }}
+        </div>
+    </div>
+    <!-- Status -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Status:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.status }}
+        </div>
+    </div>
+    <!-- Amount Including Charges -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Amount Released Including Charges:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.amount_released_including_charges }}
+        </div>
+    </div>
+    <!-- Remark -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Remark:</strong></label>
+        </div>
+        <div class="col-md-8">
+            {{ release_request_obj.remark }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-9">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm"  id="claim_submit_id">Generate</button>
+            </p>
+        </div>
+    </div>
+</form>
+</body>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% block content %}
+<style>
+    body {
+        background: #f3f5f9;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .panel-box {
+        max-width: 1200px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+    .wm-text {
+        position: absolute;
+        top: 15px;
+        right: 25px;
+        font-size: 32px;
+        color: rgba(0,0,0,0.05);
+        font-weight: bold;
+    }
+
+    .heading-main {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .info-flex {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .info-left {
+        width: 220px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .info-right a {
+        color: #2f6fed;
+        text-decoration: none;
+    }
+
+    .info-right a:hover {
+        text-decoration: underline;
+    }
+
+    .table-wrap {
+        margin-top: 20px;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table th {
+        background: #eef2f7;
+        padding: 10px;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    table td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    table input[type=number] {
+        width: 110px;
+    }
+
+    .summary-line {
+        margin-top: 15px;
+        font-weight: 600;
+    }
+
+    .btn-confirm {
+        margin-top: 20px;
+        background: #2f6fed;
+        border: none;
+        padding: 10px 25px;
+        color: white;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .btn-confirm:hover {
+        background: #1d4ed8;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #777;
+        font-size: 13px;
+    }
+</style>
+
+<div class="panel-box">
+    <div class="wm-text">{{ member_obj.id }}</div>
+
+    <h2 class="heading-main">Create Release Request</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="hidden" name="selected_due_date" value="{{ selected_due_date|date:'Y-m-d' }}">
+
+        <div class="info-flex">
+            <div class="info-left">Selected Due Date</div>
+            <div class="info-right">{{ selected_due_date }}</div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Member</div>
+            <div class="info-right">
+                <a href="{% url 'admin:members_member_change' member_obj.id %}">{{ member_obj }}</a>
+            </div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Organization</div>
+            <div class="info-right">
+                <a href="{% url 'admin:members_organization_change' wallet_obj.organization.id %}">
+                    {{ wallet_obj.organization }}
+                </a>
+            </div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Release Option</div>
+            <div class="info-right">{{ release_option_form_obj.release_option }}</div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Bank Accounts</div>
+            <div class="info-right">
+                {% for i in organization_bank_account_objects %}
+                    <div>
+                        <input type="radio" name="organization_bank_account_radio" value="{{i.id}}" required>
+                        {{ i.organization.code }} |
+                        {% if i.number %}
+                            XXXXX{{ i.number|slice:"-4:" }} |
+                        {% else %}
+                            {{ i.organization.name }} |
+                        {% endif %}
+                        {{ i.bank }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Release Date</div>
+            <div class="info-right">
+                <input type="date" name="to_be_released_on" value="{{ default_date|date:'Y-m-d' }}" required>
+            </div>
+        </div>
+
+        <div class="info-flex">
+            <div class="info-left">Instructions</div>
+            <div class="info-right">
+                <textarea name="description" rows="3" required></textarea>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <p><strong>Bookings As Due on {{ selected_due_date }}</strong></p>
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Code</th>
+                        <th>ACE</th>
+                        <th>SCE</th>
+                        <th>Currency</th>
+                        <th>Scheduled</th>
+                        <th>Actual</th>
+                        <th>Requested</th>
+                        <th>Due</th>
+                        <th>Tranche</th>
+                        <th>Loss</th>
+                        <th>Net Hold</th>
+                        <th>Release Amount</th>
+                        <th>Collection Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in pending_payments_seller %}
+                    <tr style="{% if request.GET.booking_id == item.booking_id|slugify %} border: 3px solid #4CAF50;{% endif %}">
+
+                        <td><input type="checkbox" name="booking_id" value="{{ item.booking_id }}"></td>
+
+                        <td><a href="{% url 'admin:bms_booking_change' item.booking_id %}">{{ item.booking_obj.code }}</a></td>
+
+                        <td>{{ item.booking_obj.agent_collection_entity.name }}</td>
+
+                        {% if item.seller_cost_component %}
+                            <td>{{ item.seller_cost_component.sce.name }}</td>
+                        {% else %}
+                            <td>{{ item.booking_obj.agent_collection_entity.name }}</td>
+                        {% endif %}
+
+                        <td>{{ item.member_currency_symbol }}</td>
+
+                        <td>{{ item.planned_payment }}</td>
+                        <td>{{ item.actual_payment }}</td>
+                        <td>{{ item.requested_payment }}</td>
+                        <td>{{ item.due_amount }}</td>
+                        <td>{{ item.planned_payment_tranche_due }}</td>
+
+                        <td>{{ item.total_booking_losses }}</td>
+                        <td>{{ item.booking_obj.booking_summary.net_hold }}</td>
+
+                        <td>
+                            <input type="number" step=".01"
+                                   value="{{ item.planned_payment_tranche_due }}"
+                                   name="amount">
+                        </td>
+
+                        <td>{{ item.planned_payment_tranche_due_in_collection_currency }}</td>
+
+                        <input type="hidden" name="amount_in_collection_currency"
+                               value="{{ item.planned_payment_tranche_due_in_collection_currency }}">
+
+                        <input type="hidden" name="current_roe" value="{{ item.current_roe }}">
+                        <input type="hidden" name="current_markup" value="{{ item.current_markup }}">
+                        <input type="hidden" name="is_refund_or_cancellation" value="{{ item.is_refund_or_cancellation }}">
+                        <input type="hidden" name="discount" value="{{ item.booking_financial.approved_discount }}">
+                        <input type="hidden" name="total_net_payable" value="{{ item.booking_financial.total_net_payable }}">
+                        <input type="hidden" name="member_id" value="{{ member_obj.id }}">
+                        <input type="hidden" name="organization_id" value="{{ wallet_obj.organization.id }}">
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align:center;">
+            <button type="submit" class="btn-confirm">Confirm</button>
+        </div>
+
+    </form>
+</div>
+
+<div class="footer">
+    © DMC Man | Made in 🇮🇳 India
+</div>
+
+{% endblock %}

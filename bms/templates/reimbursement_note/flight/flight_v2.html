@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        *{
+            letter-spacing: 0.1px;
+            line-height: 1.4rem;
+            font-family: Arial,serif;
+            font-size: 13px;
+            font-weight: normal;
+            border-spacing: 0px;
+        }
+        td{
+            padding-top: 2px;
+        }
+        strong{
+            font-weight: bold;
+        }
+            .elementDown {
+            vertical-align:bottom;
+            text-align: center;
+            border-width: 0px;
+            border:solid white !important;
+            margin-top:10px !important;
+            margin-bottom:10px !important;
+
+        }
+        .upelement{
+            margin-top:0px !important;
+            margin-bottom:0px !important;
+            border:solid white !important;
+        }
+        #flight_invoice_detail *{
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top:25px;
+  margin-bottom:25px;
+  text-align: center;
+}
+ th {
+font-weight: bold;}
+}
+
+
+    </style>
+</head>
+<body class="containers">
+<table width="100%">
+    <tbody>
+    <!-- Section 1 -->
+    <tr>
+        <td colspan="3" style="border-bottom:1px solid black; font-size: 20px;"><strong style="font-size:20px;">
+            INVOICE </strong>:
+            {{ instance.tax_invoice_number }}
+        </td>
+        <td colspan="2" align="right" style="border-bottom:1px solid black;padding: 5px;"><img
+                src="{{company_logo}}" width="205px" height="70px"></td>
+    </tr>
+    <!-- Section 2 -->
+    <tr>
+        <td colspan="3">
+        </td>
+        <td colspan="2" align="right">
+            INVOICE DATE: {{ invoice_date }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <span style="font-size: 13px">PAYMENT DUE BY: {{ invoice_date }}</span>
+        </td>
+        <td colspan="2" align="right">
+            <span style="font-size: 13px">TOTAL INVOICE AMOUNT: INR {{ instance.invoice_amount|floatformat:1 }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" style="border-bottom: 1px solid black;">
+            <span style="font-size: 13px">IS REVERSE CHARGE APPLICABLE (Y/N)?N</span>
+        </td>
+        <td align="right" colspan="2" style="border-bottom: 1px solid black;"></td>
+    </tr>
+    <br>
+    <tr>
+        <td colspan="3">Name : {{ instance.bookings.buyer_organization.name }}</td>
+        <td rowspan="5" colspan="2" style="border-bottom:1px solid black;min-width: 350px">
+            <strong style="font-weight: bold"><span style="font-size: 13px; font-weight: bold;">{{ COMPANY_DICT.COMPANY_NAME }}</span></strong><br>
+            <span style="font-size: 13px;">Reg. Address : {{ COMPANY_DICT.REGISTERED_ADDRESS }},</span><br>
+            <span style="font-size: 13px;">CIN No.: {{ COMPANY_DICT.CIN }}</span><br>
+            <span style="font-size: 13px;">GSTIN : {{ COMPANY_DICT.GSTIN }}</span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3"><span style="font-size: 13px">Address: {{ address_obj.line1 }} <br>{% if address_obj.line2 %}{{ address_obj.line2 }}{% endif %}</span>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3"><span style="font-size: 13px">GSTIN : {{ company_obj.gstin_number }}</span></td>
+    </tr>
+    <tr>
+        <td colspan="3"><span style="font-size: 13px">State : {{ address_obj.state.name }}</span></td>
+    </tr>
+    <tr>
+        <td colspan="3" style="border-bottom:1px solid black;">
+            <table width="100%">
+                <tbody>
+                <tr>
+                    <td style="width: 150px"><span style="font-size: 13px">Place of Supply : {{ company_obj.state.name }}</span>
+                    </td>
+                    <td style="width: 150px"><span style="font-size: 13px">State : {{ address_obj.state.name }}</span>
+                    </td>
+                    <td style="width: 150px"><span
+                            style="font-size: 13px">State Code: {{ address_obj.state.code|stringformat:"02d"  }}</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <!-- Details Section -->
+
+    <!--    invoice detailing start-->
+
+    {% if additional_data %}
+    <tr>
+        <td colspan="5" style="border-bottom:1px solid black;">
+            <div id="flight_invoice_detail">
+                <table style="width:100%;">
+                    <tr>
+                        <th>S.No</th>
+                        <th>PAX Name</th>
+                        <th>Flight</th>
+                        <th>Type</th>
+                        <th>Fare</th>
+                        <th>K3/ GST</th>
+                          <th>YQ TAX</th>
+                        <th>YR TAX</th>
+                        <th>BAG Ch.</th>
+                           <th>Meal Ch.</th>
+                        <th>Seat Ch.</th>
+                        <th>Other Taxes Ch.</th>
+                      </tr>
+             {% for pax in additional_data %}
+
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div class="upelement"> {{ pax.paxName }}</div>
+                            <div class="elementDown">
+                                {{ pax.TicketNo }}
+                            </div>
+                        </td>
+                        <td>
+                            {% for segment,flightNo in pax.flight.items %}
+                            <div class="upelement">
+                                {{segment}}
+                                <span style="margin-left: 24px; border: none;">{{flightNo}}</span >
+                            </div>
+                            {% endfor %}
+                        </td>
+                        <td>{{pax.type}}
+                        </td>
+                        <td>{{pax.fare}}</td>
+                        <td>{{pax.gst}}</td>
+                        <td>{{pax.yqTax}}</td>
+                        <td>{{pax.yrTax}}</td>
+                        <td>{{pax.bagCh}}</td>
+                        <td>{{pax.mealCh }}</td>
+                        <td>{{pax.seatCh}}</td>
+                        <td>{{pax.otherTax}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+        </td>
+    </tr>
+ {% endif %}
+<!--    invoice detailing end-->
+
+
+    <tr>
+        <td colspan="2" align="center" style="border-bottom:1px solid black; border-right: 1px solid black"><strong>GROSS
+            FARE</strong>
+        </td>
+        <td colspan="3" align="center" style="border-bottom:1px solid black;"><strong>TAXABLE SERVICES (IF ANY)</strong>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" style="border-bottom:1px solid black;width: 247px;"><strong style="font-weight: bold"><span
+                style="font-size: 13px;font-weight: bold">Description of Gross Fare</span></strong></td>
+        <td align="center" style="border-bottom:1px solid black;border-right: 1px solid black;width: 85px"><strong><span
+                style="font-size: 13px; font-weight: bold">Amount</span></strong>
+        </td>
+        <td align="center" style="border-bottom:1px solid black;"><strong><span
+                style="font-size: 13px; font-weight: bold">Description of Services</span></strong></td>
+        <td align="center" style="border-bottom:1px solid black;"><strong><span
+                style="font-size: 13px; font-weight: bold">SAC CODE</span></strong></td>
+        <td align="center" style="border-bottom:1px solid black;"><strong><span
+                style="font-size: 13px; font-weight: bold;">Taxable Amount</span></strong></td>
+    </tr>
+    <tr>
+        <td align="center" style="vertical-align: top;padding-top: 10px"><span style="font-size: 13px">{{ instance.description_of_reimbursement }}</span>
+        </td>
+        {% if is_cancellation_invoice %}
+            <td align="center" style="vertical-align: top;padding-top: 10px;padding-right: 10px; width: 85px"><span style="font-size: 13px">INR {{ cancellation_invoice_delta_record.reimbursement_amount }}</span></td>
+        {% else %}
+            <td align="center" style="vertical-align: top;padding-top: 10px;padding-right: 10px; width: 85px"><span style="font-size: 13px">INR {{ instance.reimbursement_amount }}</span></td>
+        {% endif %}
+        <td align="center" style="border-left:1px solid black;height: 100px;vertical-align: top;padding-top: 10px"><span
+                style="font-size: 13px">{{ instance.description_of_service_charges }}</span></td>
+        <td align="center" style="vertical-align:top;font-size: 13px; padding-top: 12px">{{ instance.sac_code_service }}</td>
+        {% if is_cancellation_invoice %}
+            <td align="center" style="vertical-align: top;padding-top: 10px"><span style="font-size: 13px">INR {{ cancellation_invoice_delta_record.approved_discount }}</span></td>
+        {% else %}
+            {% if not is_booking_version_type_v2 %}
+                <td align="center" style="vertical-align: top;padding-top: 10px"><span style="font-size: 13px">INR {{ instance.service_charges }}</span></td>
+            {% else %}
+                <td align="center" style="vertical-align: top;padding-top: 10px"><span style="font-size: 13px">INR {{ instance.approved_discount }}</span></td>
+            {% endif %}
+        {% endif %}
+    </tr>
+   {% if is_booking_version_type_v2 %}
+        {% if is_cancellation_invoice %}
+            {% if cancellation_invoice_delta_record.scratch_card_amount %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="border-left:1px solid black;" align="center">Scratch Card Reversal</td>
+                    <td align="center">--</td>
+                    <td align="center">INR {{ cancellation_invoice_delta_record.scratch_card_amount|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+        {% else %}
+            {% if instance.scratch_card_amount %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="border-left:1px solid black;" align="center">Scratch Card Reversal</td>
+                    <td align="center">--</td>
+                    <td align="center">INR {{ instance.scratch_card_amount|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;" align="center"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;"></td>
+    </tr>
+    <tr>
+        <td style="border-bottom:1px solid black;width: 25rem;"><strong><span style="font-weight: bold;font-size: 13px">Total Gross Fare Amount</span></strong>
+        </td>
+        {% if is_cancellation_invoice %}
+            <td align="center" style="border-bottom:1px solid black;padding-right: 10px;width: 85px">INR {{ cancellation_invoice_delta_record.reimbursement_amount }}</td>
+        {% else %}
+            <td align="center" style="border-bottom:1px solid black;padding-right: 10px;width: 85px">INR {{ instance.reimbursement_amount }}</td>
+        {% endif %}
+        <td style="border-left:1px solid black;border-bottom: 1px solid black;width: 21rem"><strong><span
+                style="font-size: 13px;font-weight: bold">Total Discount Provided</span></strong>
+        </td>
+        <td style="border-bottom:1px solid black;"></td>
+        {% if not is_booking_version_type_v2 %}
+            <td align="center" style="border-bottom:1px solid black;">INR {{ instance.total_service_charges_with_tax }}</td>
+        {% else %}
+            <td align="center" style="border-bottom:1px solid black;">INR {{ total_amount|floatformat:2 }}</td>
+        {% endif %}
+
+    </tr>
+    <tr>
+        <td><div style="color:white">w </div></td>
+    </tr>
+    <tr>
+        <td colspan="3"><strong>GRAND TOTAL</strong></td>
+        {% if is_cancellation_invoice %}
+             <td colspan="2" align="right">INR {{ cancellation_invoice_delta_record.invoice_amount|floatformat:1 }} </td>
+        {% else %}
+            <td colspan="2" align="right">INR {{ instance.invoice_amount|floatformat:1 }} </td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td><div style="color:white">w </div></td>
+    </tr>
+    <tr>
+        <td colspan="3" align="left"><strong>COMPANY DETAILS</strong></td>
+        <td colspan="2" align="right"><strong>CONTACT INFORMATION</strong></td>
+    </tr>
+    <tr>
+        <td colspan="3">{{ COMPANY_DICT.COMPANY_FULL_NAME }}</td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.SPOC_NAME }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">PAN : {{ COMPANY_DICT.PAN }}</td>
+        <td colspan="2" align="right">Phone : {{ COMPANY_DICT.SPOC_PHONE }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.WEBSITE }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.SPOC_EMAIL }}</td>
+    </tr>
+    <tr>
+        <td colspan="5" align="right"><strong>FOR {{ COMPANY_DICT.COMPANY_NAME }}</strong></td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td colspan="5" align="right" style="padding-top: 7rem;padding-bottom: 1.5rem">Authorised Signatory</td>
+    </tr>
+    <tr>
+        <td colspan="5" style="border-bottom:1px solid black;"></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center" style="border-bottom: 1px solid black;"><strong>{{ COMPANY_DICT.FOOTER_TEXT }}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center"><strong>Corporate Address :</strong>{{ COMPANY_DICT.CORPORATE_ADDRESS }}</td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center"><strong>Registered Address :</strong>{{ COMPANY_DICT.REGISTERED_ADDRESS }}</td>
+    </tr>
+    </tbody>
+</table>
+<footer>
+    <p align="center"><strong>*** This is system generated invoice no signature required. ***</strong></p>
+</footer>
+</body>
+</html>

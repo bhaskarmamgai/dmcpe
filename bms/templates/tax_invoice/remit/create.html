@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Invoice </title>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style type="text/css">
+        #id_igst_percentage_on_service_charges,#id_cgst_percentage_on_service_charges,#id_sgst_percentage_on_service_charges{
+            width: 70px;
+        }
+        #id_igst_amount_on_service_charges,#id_sgst_amount_on_service_charges,#id_cgst_amount_on_service_charges,#balance,#invoice_amount{
+            border : 0px;
+        }       
+    </style>
+</head>
+<body class="container">
+<h2>Create Invoice</h2>
+    {% if form.errors %}
+    {% for field in form %}
+    {% for error in field.errors %}
+    <div class="alert alert-danger">
+        <strong>{{ field.name|escape|title }} - {{ error|escape }}</strong>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% endif %}
+
+<p><strong>Booking Code</strong> : {{ booking_obj.code }}<br>
+    <strong>Safe Id :</strong>{{ booking_obj.safe_id }}
+</p>
+<!-- Booking Amount -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Booking Amount</strong> : </label>
+        </div>
+        <div class="col-md-6">
+            <input type="number" style="border : 0px;" value="{{ booking_obj.amount_in_inr }}" id="transaction_amount_in_inr" readonly/> INR
+        </div>
+    </div>
+<form class="form-horizontal" action="{% url 'trs:create_invoice_remit' booking_obj.id %}" method="post">
+    {% csrf_token %}
+    <!-- Select Company -->
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Select Company</strong> : </label>
+        </div>
+        <div class="col-md-3">
+            {{ form.company_name }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Invoice Number</label>
+        </div>
+        <div class="col-md-6">
+            {% if booking_obj.booking_details.invoice_number %}
+                <input type="text" name="tax_invoice_number" maxlength="100" required="" readonly id="id_tax_invoice_number" value="{{ booking_obj.booking_details.invoice_number }}">
+            {% else %}
+                {{ form.tax_invoice_number }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Reimbursement Description</label>
+        </div>
+        <div class="col-md-6">
+            {{ form.description_of_reimbursement }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Reimbursement Amount</label>
+        </div>
+        <div class="col-md-6">
+            {{ form.reimbursement_amount }} INR
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Service Description</label>
+        </div>
+        <div class="col-md-6">
+            {{ form.description_of_service_charges }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>SAC Code</label>
+        </div>
+        <div class="col-md-6">
+            {{ form.sac_code_service }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Service Charges</label>
+        </div>
+        <div class="col-md-6">
+            {{ form.service_charges }} INR
+        </div>
+    </div>
+    <!-- IGST -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>IGST</label>
+        </div>
+        <div class="col-md-2">
+            {{ form.igst_percentage_on_service_charges }} (%)
+            {{ form.igst_percentage_on_service_charges.errors }} 
+        </div>
+        <div class="col-md-6">
+            {{ form.igst_amount_on_service_charges }} INR
+        </div>
+    </div>
+
+    <!-- CGST -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>CGST</label>
+        </div>
+        <div class="col-md-2">
+            {{ form.cgst_percentage_on_service_charges }} (%)
+            {{ form.cgst_percentage_on_service_charges.errors }}
+        </div>
+        <div class="col-md-6">
+            {{ form.cgst_amount_on_service_charges }} INR
+        </div>
+    </div>
+     
+    <!-- SGST -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>SGST</label>
+        </div>
+        <div class="col-md-2">
+            {{ form.sgst_percentage_on_service_charges }} (%)
+            {{ form.sgst_percentage_on_service_charges.errors }}
+        </div>
+        <div class="col-md-6">
+            {{ form.sgst_amount_on_service_charges }} INR
+        </div>
+        <hr>
+    </div>
+    <div style="width: 205px;background-color: black;height: 2px;margin-left: 379px;margin-top: 5px;margin-bottom: 5px;"></div>
+    <div class="row">
+        <div class="col-md-4">
+            <label><strong>Invoice Amount</strong></label>
+        </div>
+        <div class="col-md-6">
+            <input type="number" name="invoice_amount" id="invoice_amount" readonly> INR
+        </div>
+    </div>
+    <div style="width: 205px;background-color: black;height: 2px;margin-left: 379px;margin-top: 5px;margin-bottom: 5px;"></div>
+    <div style="width: 205px;background-color: black;height: 2px;margin-left: 379px;margin-top: 5px;margin-bottom: 5px;"></div>
+    <!-- View Balance -->
+    <div class="row">
+        <div class="col-md-4">
+            <strong>Booking Amount - Invoice Amount : </strong><span class="text-danger">*</span>
+        </div>
+        <div class="col-md-6">
+            <input type="number" name="balance" id="balance" readonly> INR
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-5">
+            <input type="hidden" name="created_by" value="{{user.id}}" />
+            <input type="hidden" name="total_service_charges_with_tax" id="total_service_charges_with_tax" value="0" />
+            <input type="hidden" name="bookings" value="{{booking_obj.id}}" />
+            <button type="submit" class="btn btn-success" id="create_invoice_button">Create Invoice</button>
+        </div>
+        <span class="text-danger">**Allowed Tolerance is +/- 5 INR</span>
+    </div>
+</form>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    function update_all_tax_amount_fields(){
+
+        if (($("#id_igst_percentage_on_service_charges").val() == '') || ($('#id_igst_percentage_on_service_charges').val() < 0))
+        {
+            console.log("IAm Invalid IGST")
+            $("#id_igst_percentage_on_service_charges").val(0.0);
+            $('#id_igst_amount_on_service_charges').val(0.0);
+        }
+        else{
+            console.log("Iam Valid")
+            var service_charge = $("#id_service_charges").val();
+            var total = (($("#id_igst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2);
+            $('#id_igst_amount_on_service_charges').val(total);
+        }
+
+        if (($("#id_cgst_percentage_on_service_charges").val() == '') || ($("#id_cgst_percentage_on_service_charges").val() < 0))
+        {
+            console.log("Iam Invalid CGST")
+            $("#id_cgst_percentage_on_service_charges").val(0.0);
+            $("#id_cgst_amount_on_service_charges").val(0.0);
+        }
+        else
+        {
+            console.log("Iam Valid CGST")
+            var service_charge = $("#id_service_charges").val();
+            var total = (($("#id_cgst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2);
+            $('#id_cgst_amount_on_service_charges').val(total);
+        }
+
+        if (($("#id_sgst_percentage_on_service_charges").val() == '') || ($("#id_sgst_percentage_on_service_charges") <0))
+        {
+            console.log("Iam Invalid SGST")
+            $("#id_sgst_percentage_on_service_charges").val(0.0);
+            $("#id_sgst_amount_on_service_charges").val(0.0);
+        }
+        else
+        {
+            console.log("Iam Valid SGST")
+            var service_charge = $("#id_service_charges").val();
+            var total = (($("#id_sgst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2);
+            $('#id_sgst_amount_on_service_charges').val(total);
+        }
+    }
+
+    //disbale enable button
+    $("#id_service_charges,#id_sgst_percentage_on_service_charges,#id_igst_percentage_on_service_charges,#id_cgst_percentage_on_service_charges,#id_reimbursement_amount").change(function(){
+          update_all_tax_amount_fields();
+          $("#balance").val(0)
+          $("#invoice_amount").val(0)
+          $("#balance").val(calculate_balance())
+          $("#total_service_charges_with_tax").val(calulate_total_service_charges_with_tax())
+          $("#invoice_amount").val(calculate_actual_amount())
+          if (Math.abs(calculate_balance()) > 5){
+            $("#create_invoice_button").prop("disabled",true);
+            $("#balance").css('color','red');
+          }
+          else{
+            $("#create_invoice_button").prop("disabled",false);
+            $("#balance").css('color','black');
+
+          }
+    });
+    function calculate_balance(){
+    	var expected_amount = parseFloat($("#transaction_amount_in_inr").val())
+        return (expected_amount - calculate_actual_amount()).toFixed(2)
+    }
+    function calulate_total_service_charges_with_tax(){
+    	var service_charge = parseFloat($("#id_service_charges").val());
+        var reimbursement_amount = parseFloat($("#id_reimbursement_amount").val());
+        var total1 = parseFloat((($("#id_cgst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2));
+        var total2 = parseFloat((($("#id_sgst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2));
+        var total3 = parseFloat((($("#id_igst_percentage_on_service_charges").val()/100) * service_charge).toFixed(2));
+          return service_charge + total1 + total2 + total3;
+    }
+    function calculate_actual_amount(){
+    	var reimbursement_amount = parseFloat($("#id_reimbursement_amount").val());
+    	return calulate_total_service_charges_with_tax() + reimbursement_amount;
+
+    }
+    $(document).ready(function(){
+        update_all_tax_amount_fields();
+        $("#balance").val(calculate_balance())
+        $("#invoice_amount").val(calculate_actual_amount())
+        $("#total_service_charges_with_tax").val(calulate_total_service_charges_with_tax())
+    })
+</script>

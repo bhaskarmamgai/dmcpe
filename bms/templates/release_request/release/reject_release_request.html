@@ -1,0 +1,98 @@
+{% block content %}
+<style>
+    body {
+        background: #f4f6fb;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .reject-box {
+        max-width: 700px;
+        margin: 60px auto;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        position: relative;
+    }
+
+    .wm-light {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 26px;
+        color: rgba(0,0,0,0.05);
+        font-weight: bold;
+    }
+
+    .title-center {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .field-row {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .field-label {
+        width: 140px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .field-input {
+        flex: 1;
+    }
+
+    .btn-reject {
+        margin-top: 20px;
+        background: #dc2626;
+        border: none;
+        padding: 10px 25px;
+        color: white;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .btn-reject:hover {
+        background: #b91c1c;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #777;
+        font-size: 13px;
+    }
+</style>
+
+<div class="reject-box">
+    <div class="wm-light">{{ request.user.id }}</div>
+
+    <h3 class="title-center">Reject Release Request</h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="field-row">
+            <div class="field-label">Remark *</div>
+            <div class="field-input">
+                {{ reject_release_request_form_obj.remark }}
+            </div>
+        </div>
+
+        <div style="text-align:center;">
+            <button type="submit" class="btn-reject">
+                Confirm
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<div class="footer">
+    © DMC Man | Made in 🇮🇳 India
+</div>
+
+{% endblock %}

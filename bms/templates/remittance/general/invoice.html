@@ -1,0 +1,126 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            <h1>Generate {{booking_obj.type.name}} Invoice</h1>
+        </div>
+    </div>
+    <p>Please Check the Follwing Deatils For Proceeding:</p>
+    <!-- Booking -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Booking  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:trs_booking_change' booking_obj.id %}">{{ booking_obj }}</a></p>
+        </div>
+    </div>
+    <!-- Buyer -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Buyer  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:members_member_change' booking_obj.buyer.id %}">{{ booking_obj.buyer }}</a></p>
+        </div>
+    </div>
+    <!-- Seller -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Seller  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:members_member_change' booking_obj.buyer.id %}">{{ booking_obj.buyer }}</a></p>
+        </div>
+    </div>
+    <p><strong>Financial Details:</strong></p>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Amount in INR  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.amount_in_inr }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Booking Amount  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.amount }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Cost Price  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.cost_price }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>TDS Paid  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.tds }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Comission Received  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.commission_received }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>GST Amount  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.gst_amount }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Net Profit  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.net_profit }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Gross Profit  :</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ booking_obj.booking_financial.gross_profit }}</p>
+        </div>
+    </div>
+    {% if booking_obj.booking_financial.gross_profit > 0 %}
+    <strong>Note</strong> : Since the Gross Profit is Positive <strong>Tax Invoice</strong> will be Generated.
+    {% else %}
+    <strong>Note</strong> : Since the Gross Profit is Negative <strong>Reimbursement Note</strong> will be Generated.
+    {% endif %}
+    <strong><i>{{booking_obj.type.name}} Invoice Can Only be Generated Once.So Please Confirm</i></strong>
+    <p>
+        <input type="checkbox"  onchange="document.getElementById('generate_flight_invoice').disabled = !this.checked;" />
+        Above Mentioned Booking Details are Correct and Verified.  
+    </p>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-5">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm"  id="generate_flight_invoice" disabled>Generate Invoice</button>
+            </p>
+        </div>
+    </div>
+</form>
+</body>
+
+{% endblock %}

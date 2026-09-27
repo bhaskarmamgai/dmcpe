@@ -1,0 +1,98 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<style type="text/css">
+    table > tr > th {
+        padding:0 30px 10px 30px;
+    }
+    table > tbody>tr  >td {
+        padding:0 10px 10px 10px;
+    }
+    th {
+        text-align: center;
+    }
+    label {
+    font-weight: normal !important;
+    }
+    .fa {
+		font-size: 15px;
+    }
+    table input[type=number]{width:100px;}
+</style>
+
+<form method="POST" id="select_transactions_form" enctype="multipart/form-data">
+     <h1>Bulk Release Request</h1>
+     {% csrf_token %}
+     <br>
+     <div class="row">
+         <div class="col-md-11">
+            <table class="table table-striped table-hover">
+                <tr>
+                    <td></td>
+                    <td><strong>Booking</strong></td>
+                    <td><strong>Requested Currency</strong></td>
+                    <td><strong>Requested Amount</strong></td>
+                    <td><strong>To be Released On</strong></td>
+                    <td><strong>Description</strong></td>
+                    <td><strong>Amount Released in Member Currency</strong></td>
+                    <td><strong>Organization Bank Account</strong></td>
+                    <td><strong>Refund Mode</strong></td>
+                </tr>
+                <tbody id="pending_requests_table">
+                    {% for item in pending_release_requests %}
+                        <tr>
+                            <td><input type="checkbox" name="release_request_id" value="{{ item.id }}"
+                               class="release_request_id"></td>
+                            <td><a href="{% url 'admin:trs_booking_change' item.booking.id %}">{{ item.booking.code }}</a></td>
+                            <td>{{ item.requested_currency.symbol }}</td>
+                            <td>{{ item.requested_amount }}</td>
+                            <td>{{ item.to_be_released_on }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.requested_amount }}</td>
+                            <td>{{ item.organization_bank_account }}</td>
+                            <td>{{ item.refund_mode }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+         </div>
+     </div>
+
+    <div class="row">
+        <div class="col-md-1">
+            <input type="submit" name="submit_release" value="Release" class="btn btn-success btn-sm" id="release_selected_rr" />
+        </div>
+        <div class="col-md-1">
+            <input type="submit" name="submit_reject" value="Reject" class="btn btn-success btn-sm" id="reject_selected_rr" />
+        </div>
+    </div>
+</form>
+
+<script>
+    document.getElementById("release_selected_rr").addEventListener("click", function(event) {
+        var pending_requests = document.getElementById("pending_requests_table");
+        var number_of_checked_boxes = $('input[name=release_request_id]:checked').length;
+        if(!pending_requests.rows.length) {
+            alert("There are no pending requests to be released");
+            event.preventDefault();
+        }
+        else if(!number_of_checked_boxes) {
+            alert("Please select at least one Release Request");
+            event.preventDefault();
+        }
+    })
+
+    document.getElementById("reject_selected_rr").addEventListener("click", function(event) {
+        var pending_requests = document.getElementById("pending_requests_table");
+        var number_of_checked_boxes = $('input[name=release_request_id]:checked').length;
+        if(!pending_requests.rows.length) {
+            alert("There are no pending requests to be rejected");
+            event.preventDefault();
+        }
+        else if(!number_of_checked_boxes) {
+            alert("Please select at least one Release Request");
+            event.preventDefault();
+        }
+    })
+</script>
+
+{% endblock %}

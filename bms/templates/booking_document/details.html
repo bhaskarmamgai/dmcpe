@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="width:100%;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0">
+ <head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="telephone=no" name="format-detection">
+
+  <title>Booking Document</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet">
+  <style type="text/css">
+    @media only screen and (max-width: 600px) {
+        p, ul li, ol li, a {
+            line-height: 150% !important
+        }
+        h1, h2, h3, h1 a, h2 a, h3 a {
+            line-height: 120% !important
+        }
+        h1 {
+            font-size: 32px !important;
+            text-align: center
+        }
+        h2 {
+            font-size: 26px !important;
+            text-align: center
+        }
+        h3 {
+            font-size: 20px !important;
+            text-align: center
+        }
+    }
+    .topnav-left {
+        float: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .logo {
+        height: 60px;
+        width: 140px;
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+    }
+    .topnav-right {
+        float: right;
+        margin-right:10px;
+        margin-top: 24px;
+    }
+    .container{
+        margin-right:20px;
+        height: 26px;
+    }
+    .icon{
+        margin-right: 15px;
+    }
+    .texts {
+        font-size: 20px;
+    }
+  </style>
+ </head>
+ <body class="d-flex flex-column min-vh-100" style="width:100%;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;Margin:0;margin-bottom:50px;">
+    <div>
+        <div>
+            <div class="topnav-left">
+                <div class="logo">
+                    {% if buyer_info.logo_url %}
+                    <img src="{{buyer_info.logo_url}}" style="max-height:70px; max-width:140px">
+                    {% endif %}
+                </div>
+                {% if buyer_info.brand_name %}
+                <p class="texts" style="margin-left: 16px; margin-bottom: 0px; margin-top: 12px;">
+                    {{buyer_info.brand_name}}
+                </p>
+                {% endif %}
+            </div>
+            <div class="topnav-right">
+                <div class="container" style="white-space:nowrap; position:relative; top: 8px">
+                    {% if buyer_info.mobile %}
+                    <div class="icon" style="display:inline;">
+                        <img style="width: 20px; height: 15px;"
+                             src="https://s3.ap-south-1.amazonaws.com/com.travelsupply.cms.production/appcms/icons-1.png" width="15px"
+                             height="15px"/>
+                    </div>
+                    <div class="texts" style="display:inline; font-size: 19px">{{ buyer_info.mobile }}</div>
+                    {% endif %}
+                </div>
+                <div class="container" style="white-space:nowrap; position:relative; top: 20px">
+                    {% if buyer_info.email %}
+                    <div class="icon" style="display:inline;">
+                        <img style="width: 20px; height: 15px;"
+                             src="https://s3.ap-south-1.amazonaws.com/com.travelsupply.cms.production/appcms/icons.png" width="15px"
+                             height="15px"/>
+                    </div>
+                    <div class="texts" style="display:inline; font-size: 19px">{{ buyer_info.email }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="margin-top:16px;mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
+              <tr style="border-collapse:collapse">
+                  <td align="left" style="padding:0;Margin:0;padding-top:5px;padding-bottom:5px">
+                   <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
+                     <tr style="border-collapse:collapse">
+                      <td align="center" valign="top" style="padding:0;Margin:0;width:800px">
+                       <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
+                         <tr style="border-collapse:collapse">
+                          <td align="center" style="padding:0;Margin:0;padding-top:16px;padding-bottom:16px;font-size:0" bgcolor="#ffffff">
+                            <hr>
+                          </td>
+                         </tr>
+                       </table></td>
+                     </tr>
+                   </table></td>
+                 </tr>
+            </table>
+            <br>
+        </div>
+        <div style="position:relative; bottom:32px">
+            <p style="margin-right:8mm; margin-left:8mm; text-align: left; font-family: Roboto, sans-serif; font-style: normal; font-weight: 600; font-size: 40px; line-height: 36px; text-transform: capitalize; color: #333333">{{ name }}</p>
+            <p style="margin-right:8mm; margin-left:8mm; position: relative; bottom: 16px; text-align: left; font-family: Roboto, sans-serif; font-style: normal; font-weight: 400; font-size: 20px; line-height: 24px; text-transform: uppercase; color: #828282;">{{ passenger_name }}</p>
+            <div id="text" style="margin-right:8mm; margin-left:8mm; position: relative; top: 16px;">{{ text | safe }}</div>
+        </div>
+    </div>
+</body>
+</html>

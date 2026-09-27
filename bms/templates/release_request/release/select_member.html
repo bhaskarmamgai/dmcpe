@@ -1,0 +1,55 @@
+{% extends "trs_base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>Release Request</h1>
+        <!-- Member Dropdown -->
+        <form method="POST" id="select_seller_form">
+            {% csrf_token %}
+            <!-- Select Member -->
+            <div class="cantainer row">
+                <div class="col-md-2">
+                    <label><strong>Search Member</strong> : </label>
+                </div>
+                <div class="col-md-4">
+                    {{ form.member }}
+                </div>
+            </div>
+            <!-- Due Date -->
+            <div class="cantainer row">
+                <div class="col-md-2">
+                    <label><strong>Select Due Date</strong> : </label>
+                </div>
+                <div class="col-md-4">
+                    <input type="date" value="{{ date|date:'Y-m-d' }}" name="selected_due_date" id="selected_due_date_id" required/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4"><button class="btn btn-success btn-sm">Select Booking</button></div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        // To Prevent submit without selecting Seller
+        $("#select_seller_form").submit(function(event) {
+            member_id = $("#id_member").val()
+            if ((member_id==="undefined") || (member_id=="")) { 
+                alert("Please Select Seller")
+                event.preventDefault();
+            }
+        });
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        var yyyy = today.getFullYear();
+         if(dd<10){
+                dd='0'+dd
+            } 
+            if(mm<10){
+                mm='0'+mm
+            } 
+        today = yyyy+'-'+mm+'-'+dd;
+        document.getElementById("selected_due_date_id").setAttribute("min", today);
+    </script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-9">
+            <h1>Please enter the following details</h1>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Organization Search -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Search Organization</strong> : </label>
+        </div>
+        <div class="col-md-5">
+            {{ form.organization }}
+        </div>
+    </div>
+
+    <!-- Select mode of release request -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Please select mode of release request</strong> : </label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ mode_of_release_form.mode_of_release }}</p>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-5">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm" id="search_organization">Search</button>
+            </p>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.getElementById("search_organization").addEventListener("click", function(event) {
+        var organization_deck = document.getElementById("id_organization_on_deck");
+        if(!organization_deck.hasChildNodes()) {
+            alert("Organization is missing");
+            event.preventDefault();
+        }
+    })
+</script>
+
+{% endblock %}

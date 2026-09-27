@@ -1,0 +1,78 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<script src="https://cdn.ckeditor.com/4.13.1/full-all/ckeditor.js"></script>
+<style type="text/css">
+	td{
+		text-align: center;
+	}
+	tr>th{
+		text-align: center;
+	}
+</style>
+<h1>Create Booking Document</h1>
+{% if messages %}
+<div class="span12">
+{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message|safe }}
+    </div>
+{% endfor %}
+</div>
+{% endif %}
+<form method="POST">{% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">Document Name</label>
+    <input type="text" name="name" class="form-control" id="name" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Passenger Name</label>
+    <input type="text" name="passenger_name" class="form-control" id="passenger_name" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Delivery Date</label>
+    {% if saved_data.delivery_date %}
+    <input type="text" name="delivery_date" class="form-control" id="delivery_date1" readonly>
+    {% else %}
+    <input type="datetime-local" class="form-control" id="delivery_date2" name="delivery_date">
+    {% endif %}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Category</label>
+    <select class="form-control" name="category" id="category" required>
+      {% for item in category %}
+      <option value="{{item.id}}">{{item.name}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Status</label>
+    <select class="form-control" name="status" id="status" required>
+      {% for item in status_type %}
+      <option value="{{item}}">{{item}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="form-label">Document Type</label>
+    <select class="form-control" id="document_type" name="document_type" required>
+      {% for item in document_type %}
+      <option value="{{item}}">{{item}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Document Text</label>
+    <textarea class="ckeditor" id="editor" name="document_text">
+    </textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script type="text/javascript">
+    document.getElementById('name').value="{{ saved_data.name }}"
+    document.getElementById('status').value="{{ saved_data.status }}"
+    document.getElementById('category').value="{{ saved_data.category_id }}"
+    document.getElementById('delivery_date1').value="{{ saved_data.delivery_date }}"
+    document.getElementById('document_type').value="{{ saved_data.document_type }}"
+</script>
+{% endblock %}

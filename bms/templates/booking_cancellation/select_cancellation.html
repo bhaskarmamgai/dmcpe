@@ -1,0 +1,37 @@
+{% extends "trs_base.html" %}
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-9">
+            <h1>Please select the type of cancellation</h1>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Cancellation Type Selection -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Type of cancellation request</strong> : </label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ form.cancellation_type }}</p>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-5">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm" id="select_type_of_cancellation">Proceed</button>
+            </p>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

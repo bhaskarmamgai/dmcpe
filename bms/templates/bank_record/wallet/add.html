@@ -1,0 +1,183 @@
+{% block content %}
+<style>
+    body {
+        background: #f4f6f9;
+        font-family: Arial, sans-serif;
+    }
+
+    .container-box {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 25px 30px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .page-title {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    .info-row {
+        display: flex;
+        margin-bottom: 12px;
+    }
+
+    .info-label {
+        width: 200px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .info-value a {
+        color: #2f6fed;
+        text-decoration: none;
+    }
+
+    .info-value a:hover {
+        text-decoration: underline;
+    }
+
+    .summary-box {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    table th {
+        text-align: left;
+        padding: 10px;
+        background: #eef2f7;
+        font-weight: 600;
+    }
+
+    table td {
+        padding: 10px;
+    }
+
+    .confirm-box {
+        margin-top: 15px;
+    }
+
+    .submit-btn {
+        margin-top: 20px;
+        background: #2f6fed;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #777;
+        font-size: 13px;
+    }
+</style>
+
+<div class="container-box">
+    <h2 class="page-title">Add Money to Wallet</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="info-row">
+            <div class="info-label">Bank Record</div>
+            <div class="info-value">
+                <a href="{% url 'admin:accounts_bankrecord_change' bank_record_obj.id %}">
+                    {{ bank_record_obj }}
+                </a>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">Organization</div>
+            <div class="info-value">
+                <a href="{% url 'admin:members_organization_change' bank_record_obj.organization.id %}">
+                    {{ bank_record_obj.organization }}
+                </a>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">Member</div>
+            <div class="info-value">
+                <a href="{% url 'admin:members_member_change' bank_record_obj.member.id %}">
+                    {{ bank_record_obj.member }}
+                </a>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">Select Service</div>
+            <div class="info-value">
+                {{ form_obj.service }}
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-label">Wallet Link</div>
+            <div class="info-value">
+                <a href="{% url 'admin:wallets_wallet_change' wallet_obj.id %}">
+                    {{ wallet_obj }}
+                </a>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <strong>Wallet Summary</strong>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Wallet Currency</th>
+                        <th>Wallet Balance</th>
+                        <th>BR Amount</th>
+                        <th>BR Currency</th>
+                        <th>New Wallet Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ wallet_obj.currency }}</td>
+                        <td>{{ wallet_obj.current_balance }}</td>
+                        <td>{{ bank_record_obj.amount }}</td>
+                        <td>{{ bank_record_obj.currency }}</td>
+                        <td>{{ wallet_obj.updated_balance }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="confirm-box">
+            <label>
+                <input type="checkbox">
+                I confirm all above mention details are correct.
+            </label>
+        </div>
+
+        <button type="submit" class="submit-btn">Add to Wallet</button>
+
+    </form>
+</div>
+
+<div class="footer">
+    © DMC Man | Made in 🇮🇳 India
+</div>
+
+{% endblock %}

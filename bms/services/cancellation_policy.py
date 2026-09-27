@@ -1,0 +1,9 @@
+from bms.providers import cancellation_policy
+
+
+def create_cancellation_policy_from_seller_organization_payment_policy(booking_object):
+    return cancellation_policy.create_cancellation_policy_from_seller_organization_payment_policy(booking_object)
+
+
+def update_cancellation_terms_from_seller_organization_cancellation_terms(booking_detail_object):
+    return cancellation_policy.update_cancellation_terms_from_seller_organization_cancellation_terms(booking_detail_object)

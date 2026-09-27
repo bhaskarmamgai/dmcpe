@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Booking Alteration</title>
+  <style type="text/css">
+    * {
+      letter-spacing: 0.1px;
+      line-height: 1.4rem;
+      font-family: Arial, serif;
+      font-size: 23px;
+      border-spacing: 0px;
+    }
+
+    u {
+      font-size: 40px;
+    }
+
+    td {
+      padding-top: 2px;
+      /*
+      padding-right: 1px;
+      padding-left: 2px;*/
+    }
+
+    .notes td {
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body class="container">
+  <h1 align="center" style="margin-top:10vh;"><u>Booking Alteration</u></h1>
+
+  <form method="POST" enctype="multipart/form-data" align="center">
+    {% csrf_token %}
+    <table style="margin-top:5vh;" width="85%" align="center">
+      <tbody style="vertical-align:baseline">
+        <tr>
+
+          <!-- Headers -->
+          <td style="padding-right:0px; width:20%;">
+            <table style="width:100%;" class="notes">
+              <tr>
+                <td style="width:70%; border: 1px solid black;" align="center"><strong>Fields</strong></td>
+              </tr>
+              <tr>
+                <td align="center" style="border-right:none;">Reimbursement Amount</td>
+              </tr>
+              <tr>
+                <td align="center" style="border-right:none;">Service Charges With Tax</td>
+              </tr>
+              <tr>
+                <td align="center" style="border-right:none;">Discount</td>
+              </tr>
+              <tr style="border-bottom: 1px solid black;"></tr>
+            </table>
+          </td>
+
+          <!-- Change -->
+          <td style="padding-right:0px; width:20%;">
+            <table style="width:100%;" class="notes">
+              <tr>
+                <td style="width:70%; border: 1px solid black;" align="center"><strong>Impact</strong></td>
+              </tr>
+              <tr>
+                {% if data.reimbursement_amount.change == 0 %}
+                  <td align="center">No Change</td>
+                {% elif data.reimbursement_amount.change == 1 %}
+                  <td align="center">Increased</td>
+                {% else %}
+                  <td align="center">Decreased</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if data.service_charges_with_tax.change == 0 %}
+                  <td align="center">No Change</td>
+                {% elif data.service_charges_with_tax.change == 1 %}
+                  <td align="center">Increased</td>
+                {% else %}
+                  <td align="center">Decreased</td>
+                {% endif %}
+              </tr>
+              <tr>
+                {% if data.discount.changed_by == 0 %}
+                  <td align="center">No Change</td>
+                {% elif data.discount.change == 1 %}
+                  <td align="center">Increased</td>
+                {% else %}
+                  <td align="center">Decreased</td>
+                {% endif %}
+              </tr>
+              <tr style="border-bottom: 1px solid black;"></tr>
+            </table>
+          </td>
+
+          <!-- Changed by -->
+          <td style="padding-right:0px; width:20%;">
+            <table style="width:100%;" class="notes">
+              <tr>
+                <td style="width:70%; border: 1px solid black;" align="center"><strong>Changed By</strong></td>
+              </tr>
+              <tr>
+                <td align="center">{{ data.reimbursement_amount.changed_by }}</td>
+              </tr>
+              <tr>
+                <td align="center">{{ data.service_charges_with_tax.changed_by }}</td>
+              </tr>
+              <tr>
+                <td align="center">{{ data.discount.changed_by }}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid black;"></tr>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <br>
+
+    <input align="center" type="checkbox" id="confirm" name="confirm">
+    <label for="confirm" style="font-size:25px">confirm your details</label><br><br>
+
+    <div class="row">
+      <div class="col-md-12">
+        <p align="center">
+          <button type="submit" class="btn btn-success btn-sm" id="submit">Proceed</button>
+        </p>
+      </div>
+    </div>
+  </form>
+
+</body>
+
+<script>
+  document.getElementById("submit").addEventListener("click", function(event) {
+    var submitButton = document.getElementById("submit");
+    submitButton.style.pointerEvents = "none";
+    submitButton.innerHTML = "Please Wait";
+
+    var checkbox = document.querySelector('input[name=confirm]:checked');
+    if (!checkbox) {
+      alert("Please confirm first");
+      event.preventDefault();
+    }
+  });
+</script>
+
+</html>

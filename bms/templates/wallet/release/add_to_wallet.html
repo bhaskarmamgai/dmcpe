@@ -1,0 +1,168 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<style type="text/css">
+    /*TRBL*/
+    table > tr > th {
+        padding:0 30px 10px 30px;
+    }
+    table > tbody>tr  >td {
+        padding:0 10px 10px 10px;
+    }
+    th {
+        text-align: center;
+    }
+    label {
+    font-weight: normal !important;
+    }
+    .fa {
+		font-size: 15px;
+    }
+    table input[type=number]{width:100px;}
+</style>
+<h1 align="center">Approve : Add To Wallet</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Member -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Member:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:members_member_change' release_request_obj.member.id %}">{{ release_request_obj.member }}</a></p>
+        </div>
+    </div>
+    <!-- Organization -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Organization:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:organization_organization_change' wallet_obj.organization.id %}">{{ wallet_obj.organization }}</a></p>
+        </div>
+    </div>
+    <!-- Wallet Details -->
+    <div class="row">
+    	<div class="col-md-2">
+    		<label><strong>Wallet Deatils:</strong></label>
+    	</div>
+    	<div class="col-md-9">
+    		<a href="{% url 'admin:wallet_wallet_change' wallet_obj.id %}">{{ wallet_obj }}</a>
+    	</div>
+    </div>
+    <!-- Requested Amount -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Requested Amount:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p id="total_requested_amount">{{ release_request_obj.requested_amount }}</p>
+        </div>
+    </div>
+    <!-- To be release on -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>To be Released On:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.to_be_released_on }}</p>
+        </div>
+    </div>
+    <!-- Description -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Description:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.description }}</p>
+        </div>
+    </div>
+    <!-- Created At -->
+     <div class="row">
+        <div class="col-md-2">
+            <label><strong>Created At</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.created_at }}</p>
+        </div>
+     </div>
+    <!-- Proof -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Proof</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_req_form.proof }}</p>
+        </div>
+    </div>
+     <!-- Release Note -->
+     <div class="row">
+        <div class="col-md-2">
+            <label><strong>Release Note</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_req_form.release_notes }}</p>
+        </div>
+     </div>
+    <!--    In case of Wallet Transfer Requested Amount = Amount Including Charges-->
+    <input type="hidden" name="amount_released_including_charges" id="id_amount_released_including_charges"
+           value="{{ release_request_obj.requested_amount }}">
+     <!-- Wallet Details -->
+     <div class="row">
+    	<div class="col-md-2">
+    		<label><strong>Wallet Details</strong></label>
+    	</div>
+	    <div class="col-md-9">
+	    	<table class="table table-striped table-hover" width="100%" border="1">
+	    	<tr>
+	    		<td>Wallet Balance</td>
+	    		<td>Requested Amount</td>
+	    		<td>Updated Wallet Balance<sup>**(after releasing)</sup></td>
+	    	</tr>
+	    	<tr>
+	    		<td>{{ wallet_obj.balance }}</td>
+	    		<td>{{ release_request_obj.requested_amount }}</td>
+	    		<td>{{ wallet_obj.updated_balance }}</td>
+	    	</tr>
+	    </table>
+	    </div>
+    </div>
+
+    <!-- Table  -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Details:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <table class="table table-striped table-hover" border="1">
+            	<tr>
+            		<th align="center" colspan="3"><strong>Payment Details</strong></th>
+            	</tr>
+                <tr>
+                    <th><strong>Booking Link</strong></th>
+                    <th><strong>Actual Payment Amount</strong></th>
+                    <th><strong>Date</strong></th>
+                </tr>
+                <tbody>
+                    {% for item in actual_payment_objs %}
+                        <tr>
+                            <td><a href="{% url 'admin:trs_booking_change' item.bookings.id %}">{{ item.bookings.id }}</a></td>
+                            <td name="requested_amount">{{ item.amount }}</td>
+                            <td>{{ item.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm"  id="claim_submit_id">Confirm</button>
+            </p>
+        </div>
+    </div>
+</form>
+</body>
+
+{% endblock %}

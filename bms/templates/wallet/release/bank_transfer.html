@@ -1,0 +1,215 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<style type="text/css">
+    /*TRBL*/
+    table > tr > th {
+        padding:0 30px 10px 30px;
+    }
+    table > tbody>tr  >td {
+        padding:0 10px 10px 10px;
+    }
+    th {
+        text-align: center;
+    }
+    label {
+    font-weight: normal !important;
+    }
+    .fa {
+		font-size: 15px;
+    }
+    table input[type=number]{width:100px;}
+</style>
+<h1 align="center">Approve : Bank Transfer</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Member -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Member:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:members_member_change' release_request_obj.member.id %}">{{ release_request_obj.member }}</a></p>
+        </div>
+    </div>
+    <!-- Organization -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Organization:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p><a href="{% url 'admin:organization_organization_change' wallet_obj.organization.id %}">{{ wallet_obj.organization }}</a></p>
+        </div>
+    </div>
+    <!-- Requested Amount -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Requested Amount:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p id="total_requested_amount">{{ release_request_obj.requested_amount }}</p>
+        </div>
+    </div>
+    <!-- To be release on -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>To be Released On:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.to_be_released_on }}</p>
+        </div>
+    </div>
+    <!-- Description -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Description:</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.description }}</p>
+        </div>
+    </div>
+    <!-- Created At -->
+     <div class="row">
+        <div class="col-md-2">
+            <label><strong>Created At</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_request_obj.created_at }}</p>
+        </div>
+     </div>
+    <!-- Proof -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Proof</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_req_form.proof }}</p>
+        </div>
+    </div>
+    <!-- Amount Including Extra Charges -->
+     <div class="row">
+        <div class="col-md-2">
+            <label><strong>Amount Released Including Charges</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_req_form.amount_released_including_charges}}</p>
+        </div>
+     </div>
+     <!-- Release Note -->
+     <div class="row">
+        <div class="col-md-2">
+            <label><strong>Release Note</strong></label>
+        </div>
+        <div class="col-md-9">
+            <p>{{ release_req_form.release_notes }}</p>
+        </div>
+     </div>
+
+    <!-- Table  -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><strong>Details:</strong></label>
+        </div>
+        <div class="col-md-9" id="id_approve_released_request">
+            <table border="1">
+            	<tr>
+            		<th align="center" colspan="3"><strong>Payment Details</strong></th>
+            		<th align="center" colspan="7"><strong>Additional Charges</strong></th>
+            	</tr>
+                <tr>
+                    <th><strong>Booking Link</strong></th>
+                    <th><strong>Amount</strong></th>
+                    <th><strong>Date</strong></th>
+                    <!-- Additinal Payment Charges Form -->
+                    <th><strong>ROE on Date of Payment</strong></th>
+                    <th><strong>ROE Charge By Remittance Provider</strong></th>
+                    <th><strong>Bank Charges For Remittance (in USD)</strong></th>
+                    <th><strong>GST on Remitted Amount (in INR)</strong></th>
+                    <th><strong>Service Charges Paid to Remittance Provider (in INR)</strong></th>
+                    <th><strong>GST Paid On Service Charges paid to Remittance Provider (in INR)</strong></th>
+                    <th><strong>Actual Amount Including Charges (in INR)</strong></th>
+                </tr>
+                <tbody>
+                    {% for item in actual_payment_objs %}
+                        <tr>
+                            <!-- Actual Payment -->
+                            <td><a href="{% url 'admin:trs_booking_change' item.bookings.id %}">{{ item.bookings.id }}</a></td>
+                            <td name="requested_amount">{{ item.amount }}</td>
+                            <td>{{ item.date }}</td>
+                            {% if item.bookings.type.id in safe_id_and_remit_id %}
+                            <!-- Hidden Field Actual Payment ID -->
+                            <input type="hidden" name="actual_payment_id" value="{{ item.id }}">
+                            <!-- Amount in Member Currency -->
+                            <input type="hidden" name="amount_in_member_currency" value="{{ item.amount_in_member_currency }}">
+                            <!-- Additinal Charges Section Form -->
+                            <td>{{ seller_actual_payment_form.roe_on_date_of_payment }}</td>
+                            <td>{{ seller_actual_payment_form.roe_charged_by_remittance_provider }}</td>
+                            <td>{{ seller_actual_payment_form.bank_charges_for_remittance }}</td>
+                            <td>{{ seller_actual_payment_form.gst_on_remitted_amount }}</td>
+                            <td>{{ seller_actual_payment_form.service_charge_paid_to_remittance_provider }}</td>
+                            <td>{{ seller_actual_payment_form.gst_paid_on_service_charge_paid_to_remittance_provider }}</td>
+                            <td>{{ seller_actual_payment_form.actual_amount_released_including_charges }}</td>
+                            {% else %}
+                            <td align="center" colspan="7"><strong>Only Applicable in Remit and SAFE</strong>
+                                <input type="hidden" name="actual_payment_id" value="{{ item.id }}">
+                                <input type="hidden" name="roe_on_date_of_payment" value="0">
+                                <input type="hidden" name="roe_charged_by_remittance_provider" value="0">
+                                <input type="hidden" name="bank_charges_for_remittance" value="0">
+                                <input type="hidden" name="gst_on_remitted_amount" value="0">
+                                <input type="hidden" name="service_charge_paid_to_remittance_provider" value="0">
+                                <input type="hidden" name="gst_paid_on_service_charge_paid_to_remittance_provider" value="0">
+                            	<input type="hidden" name="actual_amount_released_including_charges" value="0">
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm"  id="claim_submit_id">Confirm</button>
+            </p>
+        </div>
+    </div>
+</form>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+  	$('#id_approve_released_request table tbody tr td input').change(function() {
+    var rowEdit = $(this).parents('tr');
+    var amount_in_member_currency = parseFloat(rowEdit.find('input[name=amount_in_member_currency]').val()); 
+    var roe_on_date_of_payment = parseFloat(rowEdit.find('input[name=roe_on_date_of_payment]').val());
+    var roe_charged_by_remittance_provider = parseFloat(rowEdit.find('input[name=roe_charged_by_remittance_provider]').val());
+    var bank_charges_for_remittance = parseFloat(rowEdit.find('input[name=bank_charges_for_remittance]').val());
+    var gst_on_remitted_amount = parseFloat(rowEdit.find('input[name=gst_on_remitted_amount]').val());
+    var service_charge_paid_to_remittance_provider = parseFloat(rowEdit.find('input[name=service_charge_paid_to_remittance_provider]').val());
+    var gst_paid_on_service_charge_paid_to_remittance_provider = parseFloat(rowEdit.find('input[name=gst_paid_on_service_charge_paid_to_remittance_provider]').val());
+    var calculate_actual_amount_released_including_charges_input = rowEdit.find('input[name=actual_amount_released_including_charges]');
+    console.log(rowEdit,roe_on_date_of_payment,roe_charged_by_remittance_provider,bank_charges_for_remittance,gst_on_remitted_amount,service_charge_paid_to_remittance_provider,gst_paid_on_service_charge_paid_to_remittance_provider)
+    console.log("amount_in_member_currency:",amount_in_member_currency)
+    console.log("roe_on_date_of_payment:",roe_on_date_of_payment)
+    console.log("roe_charged_by_remittance_provider:",roe_charged_by_remittance_provider)
+    console.log("bank_charges_for_remittance:",bank_charges_for_remittance)
+    console.log("gst_on_remitted_amount:",gst_on_remitted_amount)
+    console.log("service_charge_paid_to_remittance_provider:",service_charge_paid_to_remittance_provider)
+    console.log("gst_paid_on_service_charge_paid_to_remittance_provider:",gst_paid_on_service_charge_paid_to_remittance_provider)
+    calculated_calculate_actual_amount_released_including_charges = calculate_actual_amount_released_including_charges(amount_in_member_currency,bank_charges_for_remittance,roe_on_date_of_payment,roe_charged_by_remittance_provider,gst_on_remitted_amount,service_charge_paid_to_remittance_provider,gst_paid_on_service_charge_paid_to_remittance_provider);
+    console.log("calculated_calculate_actual_amount_released_including_charges:",calculated_calculate_actual_amount_released_including_charges)
+    calculate_actual_amount_released_including_charges_input.val(calculated_calculate_actual_amount_released_including_charges);
+  });
+    //((amount_in_member_currency + bank_charges_for_remittance) * (roe_on_date_of_payment + roe_charged_by_remittance_provider))
+	// + gst_on_remitted_amount
+	// + service_charge_paid_to_remittance_provider
+	// + gst_paid_on_service_charge_paid_to_remittance_provider
+
+  	function calculate_actual_amount_released_including_charges(amount_in_member_currency,bank_charges_for_remittance,roe_on_date_of_payment,roe_charged_by_remittance_provider,gst_on_remitted_amount,service_charge_paid_to_remittance_provider,gst_paid_on_service_charge_paid_to_remittance_provider){
+  		console.log("Cal Actual Booking Amount")
+  		return ((amount_in_member_currency + bank_charges_for_remittance) * (roe_on_date_of_payment + roe_charged_by_remittance_provider)) + gst_on_remitted_amount + service_charge_paid_to_remittance_provider + gst_paid_on_service_charge_paid_to_remittance_provider
+  	}
+})
+</script>
+{% endblock %}

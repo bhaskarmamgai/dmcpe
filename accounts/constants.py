@@ -1,0 +1,1 @@
+CURRENCY_ID_INR = 1

@@ -1,0 +1,161 @@
+{% extends "trs_base.html" %}
+{% block content %}
+
+<div class="container">
+    <h1>Fill Cancellation Details</h1>
+
+    <form method="POST" id="cancellation_process_v2_form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <br>
+
+        <!-- Cancellation Type -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Cancellation Type</strong> : </label>
+            </div>
+            <div class="col-md-5">
+               {% if cancellation_type == full_cancellation %}
+                    <p class="cancellation_type">Full Cancellation</p>
+                    <input type="text" value="full_cancellation" name="cancellation_type_value" hidden />
+               {% elif cancellation_type == partial_cancellation %}
+                     <p class="cancellation_type">Partial Cancellation</p>
+                    <input type="text" value="partial_cancellation" name="cancellation_type_value" hidden />
+               {% endif %}
+            </div>
+        </div>
+        <br>
+
+        <!-- Reimbursement amount -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Reimbursement Amount</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input value="{{ reimbursement_amount }}" type="number" id="reimbursement_amount" class="invoice noneditable partial_cancel_reimbursement_amount" step="0.001" required />
+                <input type="number" class="full_cancel_reimbursement_amount" value="{{ reimbursement_amount }}" hidden />
+            </div>
+        </div>
+        <br>
+
+        <!-- Service Charges -->
+         <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Service Charges</strong></label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" id="service_charges" step="0.001" class="invoice noneditable partial_cancel_service_charges" value="{{ service_charges }}" required />
+                <input type="number" class="full_cancel_service_charges" value="{{ service_charges }}" hidden />
+            </div>
+         </div>
+        <br>
+
+        <!-- Discount -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Discount</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" id="discount" step="0.001" class="invoice noneditable partial_cancel_discount" value="{{ discount }}" required />
+                <input type="number" class="full_cancel_discount" value="{{ discount }}" hidden />
+            </div>
+        </div>
+        <br>
+
+        <!-- Scratch Card -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Scratch Card Amount</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input type="number" id="scratch_card_amount" step="0.001" class="invoice noneditable partial_cancel_scratch_card_amount" value="{{ scratch_card_amount }}" required />
+                <input type="number" class="full_cancel_scratch_card_amount" value="{{ scratch_card_amount }}" hidden />
+            </div>
+        </div>
+        <br>
+
+        <!-- Provider Cancellation Charges -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Provider Cancellation Charges</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input value="0.0" type="number" name="provider_cancellation_charges" class="invoice" id="provider_cancellation_charges" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!-- Travel Supply Cancellation Charges -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Travel Supply Cancellation Charges (Including GST)</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <input value="0.0" type="number" name="travelsupply_cancellation_charges" class="invoice" id="travelsupply_cancellation_charges" step="0.001" required />
+            </div>
+        </div>
+        <br>
+
+        <!-- Refund Amount -->
+        <div class="container row">
+            <div class="col-md-3">
+                <label><strong>Refund Amount</strong> : </label>
+            </div>
+            <div class="col-md-5">
+                <p id="refund_amount"></p>
+                <input name="scratch_card_status" value="{{ scratch_card_status }}" hidden />
+            </div>
+        </div>
+        <br>
+
+        <div class="row mt-2">
+            <div class="col-md-3"></div>
+            <div class="col-md-5">
+                <button type="submit" id="submit_button" class="btn btn-success btn-sm">Confirm</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script type="text/javascript">
+    function calculateRefundAmount() {
+        var reimbursementAmount = parseFloat($("#reimbursement_amount").val());
+        var serviceCharges = parseFloat($("#service_charges").val());
+        var discount = parseFloat($("#discount").val());
+        var scratchCardReversalAmount = parseFloat($("#scratch_card_amount").val());
+        var providerCancellationCharges = parseFloat($("#provider_cancellation_charges").val());
+        var travelsupplyCancellationCharges = parseFloat($("#travelsupply_cancellation_charges").val());
+        return (reimbursementAmount + serviceCharges - discount - scratchCardReversalAmount - providerCancellationCharges - travelsupplyCancellationCharges).toFixed(2);
+    }
+
+    document.getElementById("submit_button").addEventListener("click", function(event) {
+        var submitButton = document.getElementById("submit_button");
+        submitButton.style.pointerEvents = "none";
+        submitButton.innerHTML = "Please Wait";
+    });
+
+    $(document).ready(function() {
+         $(".noneditable").each(function() {
+            if($(".cancellation_type").text() === "Full Cancellation" ){
+                $(".noneditable").prop("disabled", true);
+                $(".full_cancel_reimbursement_amount").prop("name", "reimbursement_amount");
+                $(".full_cancel_service_charges").prop("name", "service_charges");
+                $(".full_cancel_discount").prop("name", "discount");
+                $(".full_cancel_scratch_card_amount").prop("name", "scratch_card_amount");
+            } else {
+                $(".partial_cancel_reimbursement_amount").prop("name", "reimbursement_amount");
+                $(".partial_cancel_service_charges").prop("name", "service_charges");
+                $(".partial_cancel_discount").prop("name", "discount");
+                $(".partial_cancel_scratch_card_amount").prop("name", "scratch_card_amount");
+            }
+        });
+        $("#refund_amount").text(calculateRefundAmount());
+    })
+
+    $(document).on('keyup','.invoice',function(){
+        $("#refund_amount").text(calculateRefundAmount());
+    })
+
+</script>
+
+{% endblock %}

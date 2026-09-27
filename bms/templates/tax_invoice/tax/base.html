@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+		td{
+		padding-top: 2px;/*
+		padding-right: 1px;
+		padding-left: 2px;*/
+		}
+
+    </style>
+</head>
+<body class="containers">
+<table width="100%">
+    <tbody>
+    <!-- Section 1 -->
+    <tr>
+        <td colspan="3" style="border-bottom:1px solid black; font-size: 20px;"><strong>TAX INVOICE </strong>:
+            {{ instance.tax_invoice_number }}
+        </td>
+        <td colspan="2" align="right" style="border-bottom:1px solid black;padding: 5px;"><img
+                src="{{company_logo}}" width="205px" height="70px"></td>
+    </tr>
+    <!-- Section 2 -->
+    <tr>
+        <td colspan="3">
+        </td>
+        <td colspan="2" align="right">
+            {{ invoice_date }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            PAYMENT DUE BY:
+        </td>
+        <td colspan="2" align="right">
+            INR {{ instance.invoice_amount|floatformat:2 }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" style="border-bottom: 1px solid black;">
+            IS REVERSE CHARGE APPLICABLE (Y/N)?N
+        </td>
+        <td align="right" colspan="2" style="border-bottom: 1px solid black;"></td>
+    </tr>
+    <br>
+    <tr>
+        <td colspan="3">Name : {{ instance.bookings.buyer_organization.name }}</td>
+        <td rowspan="5" colspan="2" style="border-bottom:1px solid black;">
+            <strong>{{ COMPANY_DICT.COMPANY_NAME }}</strong><br>
+            Reg. Address : {{ COMPANY_DICT.REGISTERED_ADDRESS }},<br>
+            No.: {{ COMPANY_DICT.CIN }}<br>
+            GSTIN : {{ COMPANY_DICT.GSTIN }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">Address: {{ address_obj.line1 }} <br>{% if address_obj.line2 %}{{ address_obj.line2 }}{% endif %}</td>
+    </tr>
+    <tr>
+        <td colspan="3">GSTIN : {{ company_obj.gstin_number }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">State : {{ address_obj.state.name }}</td>
+    </tr>
+    <tr>
+        <td colspan="3" style="border-bottom:1px solid black;">
+            <table width="100%">
+                <tbody>
+                <tr>
+                    <td>Place of Supply : {{ company_obj.state.name }}</td>
+                    <td>State : {{ address_obj.state.name }}</td>
+                    <td>State Code: {{ address_obj.state.code }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <!-- Details Section -->
+    <tr>
+        <td colspan="2" align="center" style="border-bottom:1px solid black; border-right: 1px solid black"><strong>REIMBURSEMENT</strong>
+        </td>
+        <td colspan="3" align="center" style="border-bottom:1px solid black;"><strong>TAXABLE SERVICES (IF ANY)</strong></td>
+    </tr>
+    <tr>
+        <td align="center" style="border-bottom:1px solid black;"><strong>Description of Reimbursements</strong></td>
+        <td align="center" style="border-bottom:1px solid black;border-right: 1px solid black"><strong>Amount</strong>
+        </td>
+        <td align="center" style="border-bottom:1px solid black;"><strong>Description of Services</strong></td>
+        <td align="center" style="border-bottom:1px solid black;"><strong>SAC CODE</strong></td>
+        <td align="center" style="border-bottom:1px solid black;"><strong>Taxable Amount</strong></td>
+    </tr>
+    <tr>
+        <td align="center">{{ instance.description_of_reimbursement }}</td>
+        <td align="center">INR {{ instance.reimbursement_amount }}</td>
+        <td align="center" style="border-left:1px solid black;">{{ instance.description_of_service_charges }}</td>
+        <td align="center">{{ instance.sac_code_service }}</td>
+        <td align="center">INR {{ instance.service_charges }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;" align="center"><strong>IGST</strong></td>
+        <td align="center">
+            {% if instance.igst_percentage_on_service_charges %}
+            {{ instance.igst_percentage_on_service_charges }} %
+            {% else %}
+            --
+            {% endif %}
+        </td>
+        <td align="center">INR {{ instance.igst_amount_on_service_charges|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;" align="center"><strong>CGST</strong></td>
+        <td align="center">
+            {% if instance.cgst_percentage_on_service_charges %}
+            {{ instance.cgst_percentage_on_service_charges }} %
+            {% else %}
+            --
+            {% endif %}
+        </td>
+        <td align="center">INR {{ instance.cgst_amount_on_service_charges|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td style="border-left:1px solid black;" align="center"><strong>SGST</strong></td>
+        <td align="center">
+            {% if instance.sgst_percentage_on_service_charges %}
+            {{ instance.sgst_percentage_on_service_charges }} %
+        </td>
+        {% else %}
+        --
+        {% endif %}
+        <td align="center">INR {{ instance.sgst_amount_on_service_charges|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td style="border-bottom:1px solid black;"><strong>Total Reimbursement Amount</strong></td>
+        <td align="center" style="border-bottom:1px solid black;">INR {{ instance.reimbursement_amount }}</td>
+        <td style="border-left:1px solid black;border-bottom: 1px solid black;"><strong>Total Amount After Tax</strong>
+        </td>
+        <td style="border-bottom:1px solid black;"></td>
+        <td align="center" style="border-bottom:1px solid black;">INR
+            {{ instance.total_service_charges_with_tax }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3"><strong>Grand Total</strong></td>
+        <td colspan="2" align="right">INR {{ instance.invoice_amount|floatformat:2 }} </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="left"><strong>COMPANY DETAILS</strong></td>
+        <td colspan="2" align="right"><strong>CONTACT INFORMATION</strong></td>
+    </tr>
+    <tr>
+        <td colspan="3">{{ COMPANY_DICT.COMPANY_FULL_NAME }}</td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.SPOC_NAME }}</td>
+    </tr>
+    <tr>
+        <td colspan="3">PAN : {{ COMPANY_DICT.PAN }}</td>
+        <td colspan="2" align="right">Phone : {{ COMPANY_DICT.SPOC_PHONE }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.WEBSITE }}</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td colspan="2" align="right">{{ COMPANY_DICT.SPOC_EMAIL }}</td>
+    </tr>
+    <tr>
+        <td colspan="5" align="right"><strong>FOR {{ COMPANY_DICT.COMPANY_NAME }}</strong></td>
+    </tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr>
+        <td colspan="5" align="right">Authorised Signatory</td>
+    </tr>
+    <tr>
+        <td colspan="5" style="border-bottom:1px solid black;"></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center" style="border-bottom: 1px solid black;"><strong>{{ COMPANY_DICT.FOOTER_TEXT }}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center"><strong>Corporate Adresss :</strong>{{ COMPANY_DICT.CORPORATE_ADDRESS }}</td>
+    </tr>
+    <tr>
+        <td colspan="5" align="center"><strong>Registered Adresss :</strong>{{ COMPANY_DICT.REGISTERED_ADDRESS }}</td>
+    </tr>
+    </tbody>
+</table>
+<footer>
+    <p align="center"><strong>*** This is system generated invoice no signature required. ***</strong></p>
+</footer>
+</body>
+</html>

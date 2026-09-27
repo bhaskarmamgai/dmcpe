@@ -1,0 +1,225 @@
+{% block content %}
+<style>
+    body {
+        background: #f5f7fb;
+    }
+
+    .card-box {
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .watermark {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 40px;
+        color: rgba(0,0,0,0.05);
+        font-weight: bold;
+        pointer-events: none;
+    }
+
+    table {
+        width: 100%;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table th {
+        background: #f1f3f6;
+        padding: 10px;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    table td {
+        padding: 10px;
+    }
+
+    .submit-btn {
+        background: #2f6fed;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .section-label {
+        font-weight: 600;
+    }
+</style>
+
+<div class="card-box">
+    <div class="watermark">{{ organization_obj.code }}</div>
+
+    <form method="POST">
+        <h2 style="margin-bottom:20px;">Claim Against Booking</h2>
+
+        {% csrf_token %}
+
+        <!-- Hidden -->
+        <input type="hidden" name="selected_due_date" value="{{ selected_due_date|date:'Y-m-d' }}">
+
+        <!-- Selected Date -->
+        <div class="row">
+            <div class="col-md-2 section-label">Selected Due Date:</div>
+            <div class="col-md-7">
+                <p>{{ selected_due_date }}</p>
+            </div>
+        </div>
+
+        <!-- Organization Details -->
+        <div class="row">
+            <div class="col-md-2 section-label">Organization ID:</div>
+            <div class="col-md-7">
+                <a href="{% url 'admin:members_organization_change' organization_obj.id %}">
+                    {{ organization_obj }}
+                </a>
+                <input type="hidden" name="organization_id" id="organization_id"
+                       value="{{ form.organization_id.value }}">
+                <input type="hidden" name="member_id" id="member_id" value="{{ member_id }}">
+            </div>
+        </div>
+
+        <!-- Wallet Details -->
+        <div class="row">
+            <div class="col-md-2 section-label">Available Amount in Wallet:</div>
+            <div class="col-md-7">
+                <input type="hidden" name="wallet_id" value="{{ wallet_obj.id }}" />
+                <input type="hidden" name="wallet_balance"
+                       value="{{ wallet_obj.current_balance }}"
+                       id="wallet_balance_id" readonly />
+                <p style="font-size:18px;">
+                    <strong>₹ {{ wallet_obj.current_balance }}</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="row">
+            <div class="col-md-12">
+                <p><strong>Bookings As Due on {{ selected_due_date }}</strong></p>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Booking Code</th>
+                            <th>Booking amt</th>
+                            <th>Member currency</th>
+                            <th>Scheduled Collection*</th>
+                            <th>Actual Collection*</th>
+                            <th>Pending Collection*</th>
+                            <th>Amount to Claim</th>
+
+                            {% if booking_version_type == "v1"%}
+                            <th>ROE Charged</th>
+                            {% endif %}
+
+                            <th>Destination</th>
+                            <th>Night</th>
+                            <th>Date of Travel</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for item in pending_payments %}
+                        <tr {% if request.GET.booking_id == item.booking_id %}
+                                style="border: 3px solid #4CAF50;"
+                            {% endif %}>
+
+                            <td>
+                                <input type="checkbox" name="booking_id"
+                                       value="{{ item.booking_id }}"
+                                       class="selected_due_amt">
+                            </td>
+
+                            <td>
+                                <a href="{% url 'admin:bms_booking_change' item.booking_id %}">
+                                    {{ item.booking_obj.code }}
+                                </a>
+                            </td>
+
+                            <td>{{ item.booking_obj.amount_in_collection_currency }}</td>
+
+                            <td>
+                                <input type="hidden" name="currency_id"
+                                       value="{{item.currency_id}}">
+                                {{item.currency}}
+                            </td>
+
+                            <input type="hidden" name="collection_currency_id"
+                                   value="{{item.collection_currency_id}}">
+
+                            <input type="hidden" name="booking_date"
+                                   value="{{item.booking_date}}">
+
+                            <td>
+                                <a href="{% url 'admin:bms_booking_change' item.booking_id %}#planned_payments-group">
+                                    {{ item.planned_payment }}
+                                </a>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'admin:bms_booking_change' item.booking_id %}#actual_payments-group">
+                                    {{ item.actual_payment }}
+                                </a>
+                            </td>
+
+                            <td>{{ item.due_amount }}</td>
+
+                            <input type="hidden" name="due_amount"
+                                   value="{{ item.due_amount }}">
+
+                            <td>
+                                <input type="number" step=".01" value="0"
+                                       min="0" name="amount"
+                                       class="amount_to_claim" />
+                            </td>
+
+                            <td>{{ item.booking_obj.destination.name }}</td>
+                            <td>{{ item.booking_obj.nights_count }}</td>
+                            <td>{{ item.booking_obj.departure_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- Submit -->
+        <div style="text-align:center;">
+            <button type="submit" class="submit-btn" id="claim_submit_id">
+                Submit
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    © DMC Man | Made in 🇮🇳 India
+</div>
+
+{% endblock %}

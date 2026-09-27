@@ -1,0 +1,97 @@
+{% extends "trs_base.html" %}
+{% block content %}
+<style type="text/css">
+    /*TRBL*/
+    table > tr > th {
+        padding:0 30px 10px 30px;
+    }
+    table > tbody>tr  >td {
+        padding:0 10px 10px 10px;
+    }
+    th {
+        text-align: center;
+    }
+    label {
+    font-weight: normal !important;
+    }
+    .fa {
+		font-size: 15px;
+    }
+    table input[type=number]{width:100px;}
+</style>
+<h1 align="center">Cancellation Final Settlement</h1>
+<form method="POST">
+    {% csrf_token %}
+    <!-- HEADERS -->
+    <table border="1" class="table-striped table-hover">
+        <tr>
+            <td></td>
+            <td><strong>Member</strong></td>
+            <td><strong>Member Organization</strong></td>
+            <td><strong>Amount</strong></td>
+            <td><strong>Currency</strong></td>
+            <td><strong>Type</strong></td>
+            <td><strong>Due Date</strong></td>
+        </tr>
+        <!-- Buyer Details -->
+        <tr>
+            <td><strong>Buyer</strong></td>
+            <td>
+                <input type="hidden" name="member_id" value="{{booking_obj.buyer.id}}">
+                <a href="{% url 'admin:members_member_change' booking_obj.buyer.id %}">{{ booking_obj.buyer }}</a>
+            </td>
+            <td>
+                <input type="hidden" name="organization_id" value="{{booking_obj.buyer_organization.id}}">
+                <a href="{% url 'admin:organization_organization_change' booking_obj.buyer.id %}">{{ booking_obj.buyer_organization }}</a>
+            </td>
+            <td>
+                {{ form.amount }}
+            </td>
+            <td>
+                <input type="hidden" name="currency_symbol" value="{{ booking_obj.collection_currency }}">
+                {{ booking_obj.collection_currency }}
+            </td>
+            <td>
+                {{ form.collect_or_pay }}
+            </td>
+            <td>
+                <input type="date" id="due_date_id" name="due_date_id">
+            </td>
+
+        </tr>
+        <!-- Seller -->
+        {% for seller_cost_component in seller_cost_components %}
+        <tr>
+            <td><strong>Seller</strong></td>
+            <td>
+                <input type="hidden" name="member_id" value="{{seller_cost_component.seller_member.id}}">
+                <a href="{% url 'admin:members_member_change' seller_cost_component.seller_member.id %}">{{ seller_cost_component.seller_member }}</a>            </td>
+            <td>
+                <input type="hidden" name="organization_id" value="{{seller_cost_component.seller_organization.id}}">
+                <a href="{% url 'admin:organization_organization_change' seller_cost_component.seller_organization.id %}">{{ seller_cost_component.seller_organization }}</a>
+            </td>
+            <td>
+                {{ form.amount }}
+            </td>
+            <td>
+                <input type="hidden" name="currency_symbol" value="{{ seller_cost_component.seller_currency }}">
+                {{ seller_cost_component.seller_currency }}
+            </td>
+            <td>
+                {{ form.collect_or_pay }}
+            </td>
+            <td>
+                <input type="date" id="seller_due_date_id" name="due_date_id">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <div class="row">
+    	<div class="col-md-12">
+    		<p align="center"><button type="submit" class="btn btn-success">Submit</button></p>
+    	</div>
+    </div>
+</form>
+</body>
+{% endblock %}

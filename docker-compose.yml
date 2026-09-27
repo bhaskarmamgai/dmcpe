@@ -1,0 +1,51 @@
+services:
+  web:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dmspe_backend
+    command: bash /entrypoint.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+      - redis
+
+  db:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    container_name: dmspe_db
+    environment:
+      POSTGRES_USER: dmcpe
+      POSTGRES_PASSWORD: dmcpe@1234
+      POSTGRES_DB: dmcpe_dev
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  redis:
+    platform: linux/amd64
+    image: redis:alpine
+    container_name: dmspe_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+volumes:
+  pg_data:
+    external: true
+    name: dmcpe_pg_data
+
+  redis_data:
+    external: true
+    name: dmcpe_redis_data

@@ -1,0 +1,196 @@
+{% extends "trs_base.html" %}
+
+{% block content %}
+<style type="text/css">
+    table > tbody>tr  >td {
+        padding:0 10px 10px 10px;
+    }
+    label {
+    font-weight: normal !important;
+    }
+</style>
+<form method="POST" id="select_transactions_form">
+    <h1>Claim Request</h1>
+    {% csrf_token %}
+    <!-- Hidden -->
+    <input type="hidden" name="selected_due_date" value="{{ selected_due_date|date:'Y-m-d' }}">
+    <!-- Selected Date -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>Selected Due Date:</label>
+        </div>
+        <div class="col-md-7">
+            <p>{{ selected_due_date }}</p>
+        </div>
+    </div>
+    <!-- Member Id -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>Member ID:</label>
+        </div>
+        <div class="col-md-7">
+            <a href="{% url 'admin:members_member_change' member_obj.id %}">{{ form.member_id.value }}</a> | {{ member_obj }}
+            <input type="hidden" name="member_id" id="member_id" value="{{ form.member_id.value }}">
+        </div>
+    </div>
+    <!-- Record id -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>Bank Record ID:</label>
+        </div>
+        <div class="col-md-7">
+            <a href="{% url 'admin:accounts_bankrecord_change' bank_record_obj.id %}">{{ form.record_id.value }}</a> | {{ bank_record_obj.credit_or_debit }} | {{ bank_record_obj.date }} | Ref ID: {{ bank_record_obj.reference_id }}
+            <input type="hidden" name="record_id" id="record_id" value="{{ form.record_id.value }}">
+        </div>
+    </div>
+    <!-- Claim Amount -->
+    <div class="row">
+        <div class="col-md-2">
+            <label>Amount to Claim:</label>
+        </div>
+        <div class="col-md-7">
+            <input type="hidden" name="" value="{{ bank_record_obj.amount }}" id="claim_amount_id" readonly/>
+            <p>{{ bank_record_obj.amount }}</p>
+        </div>
+    </div>
+    <!-- Table  -->
+    <div class="row">
+        <div class="col-md-2">
+            <label><p>Bookings As Due on {{ selected_due_date }}</p></label>
+        </div>
+        <div class="col-md-7">
+            <table>
+                <tr>
+                    <td></td>
+                    <td><strong>Booking Code</strong></td>
+                    <td><strong>Booking amt in INR</strong></td>
+                    <td><strong>Seller</strong></td>
+                    <td><strong>Scheduled Collection* (till {{ selected_due_date }})</strong></td>
+                    <td><strong>Actual Collection* (till date)</strong></td>
+                    <td><strong>Pending Collection* (till {{ selected_due_date }})</strong></td>
+                    <td><strong>Amount to Claim</strong></td>
+                    <td><strong>ROE Charged to Buyer</strong></td>
+                    <td><strong>Destination</strong></td>
+                    <td><strong>Night</strong></td>
+                    <td><strong>Date of Travel</strong></td>
+                </tr>
+                <tbody>
+                    {% for item in pending_payments %}
+                    <!-- https://docs.djangoproject.com/en/dev/ref/templates/builtins/?from=olddocs#yesno -->
+                    <tr class="{% if item.booking_obj.amount_in_inr <= item.actual_payment %}alert-danger{% endif %}">
+                        <td><input type="checkbox" name="booking_id" value="{{ item.booking_id }}" class="selected_due_amt"></td>
+                        <td><a href="{% url 'admin:trs_booking_change' item.booking_id %}">{{ item.booking_obj.code }}</a></td>
+                        <td>{{ item.booking_obj.amount_in_inr }}</td>
+                        <td><a href="{% url 'admin:members_member_change' item.booking_obj.seller.id %}">{{ item.booking_obj.seller }}</a></td>
+                        <td><a href="{% url 'admin:trs_booking_change' item.booking_id %}#planned_payments-group">&#x20b9;
+                        {{ item.planned_payment }}</a></td>
+                        <td><a href="{% url 'admin:trs_booking_change' item.booking_id %}#actual_payments-group">&#x20b9; {{ item.actual_payment }}</a></td>
+                        <td>{{ item.due_amount }}</td>
+
+                        <td><input type="number" step=".01" value="0" min="0" name="amount" class="amount_to_claim" disabled/></td>
+                        {% if item.booking_obj.type.id in safe_and_remit_id %}
+                        <td><input type="number" step=".001" min="0.001" name="roe_charged_to_buyer" value="{{ item.default_roe_charged_to_buyer }}" disabled></td>
+                        {% else %}
+                        <td><input type="hidden" name="roe_charged_to_buyer" value="1" disabled>NA(Only for Remit and Safe)</td>
+                        {% endif %}
+                        <td>{% if item.booking_obj.destination %}{{ item.booking_obj.destination.name }} {% else %} {{ item.booking_obj.destination_text }} {% endif %}</td>
+                        <td>{{ item.booking_obj.nights_count }}</td>
+                        <td>{{ item.booking_obj.departure_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>        
+        </div>
+    </div>
+    <br>
+    
+    
+    <br>
+    <!-- Total Balance Amount -->
+    <div class="row">
+        <div class="col-md-3">
+            <label><strong>Total Unclaim Amount :</strong></label>
+        </div>
+        <div class="col-md-5">
+            <input type="number" style="border : 0px;" id="balance_amount_id" value="0" readonly/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <p align="center">
+                <button type="submit" class="btn btn-success btn-sm" disabled id="claim_submit_id">Confirm</button>
+            </p>
+        </div>
+    </div>
+</form>
+</body>
+
+<script>
+    $(document).ready(function()
+        {
+        $("#balance_amount_id").val($("#claim_amount_id").val()) 
+        $(document).on('keyup','.amount_to_claim',function(){
+           amount_to_claim = 0
+            // $(".amount_to_claim").change(function(){ 
+            // console.log('change'); 
+            // $("#balance_amount_id").val(0)
+            $(".amount_to_claim").each(function() {
+                console.log($(this).val());
+               amount_to_claim += parseFloat($(this).val());
+            });
+
+            // console.log(amount_to_claim);
+            
+            balance_amount = $("#claim_amount_id").val() - amount_to_claim;
+            $("#balance_amount_id").val(balance_amount)
+            console.log("***************",amount_to_claim)
+            if (amount_to_claim > $("#claim_amount_id").val()){
+                alert("Sum of Amount to claim should not be greater than Claim Amount")
+                // amount_to_claim = 0
+                // balance_amount=balance_amount - $(this).val()
+                // $("#balance_amount_id").val(0)
+                $('.amount_to_claim').val(0);
+                $("#balance_amount_id").val($("#claim_amount_id").val())
+
+            }
+            // console.log(amount_to_claim,"-------------",$("#claim_amount_id").val())
+            if (amount_to_claim == $("#claim_amount_id").val()){
+                    // console.log(amount_to_claim,"enable button------>")
+                    $("#claim_submit_id").prop("disabled",false);
+                    // console.log("Enable Button")
+                }
+                else{
+                    $("#claim_submit_id").prop("disabled",true);
+                    // console.log(amount_to_claim,"disabled button------>")
+                    // console.log("Disable Button")
+                }
+        });
+        // https://stackoverflow.com/questions/16543696/select-the-next-td-in-a-table-using-jquery
+        $(document).on('click','.selected_due_amt',function(){
+            // console.log('checkbox clicked');
+            if($(this).prop("checked") == false){
+                console.log('checkbox false');
+                console.log($(this).parents('tr'))
+                console.log($(this).parents('tr').find('.amount_to_claim'))
+                $(this).parents('tr').find('.amount_to_claim').attr('disabled',true);
+                $(this).parents('tr').find('input[name=roe_charged_to_buyer]').attr('disabled',true);
+                $(this).parents('tr').find('.amount_to_claim').val(0);
+            }
+            else if($(this).prop("checked") == true){
+                console.log('checkbox true');
+                console.log($(this).parents('tr'))
+                console.log($(this).find('.amount_to_claim'))
+                $(this).parents('tr').find('.amount_to_claim').removeAttr('disabled',false);
+                $(this).parents('tr').find('input[name=roe_charged_to_buyer]').attr('disabled',false);
+            }
+        });
+        // https://stackoverflow.com/questions/3381234/auto-refresh-parent-window-after-closing-popup
+        $("#select_transactions_form").submit(function(event) {
+            window.onunload = function(){
+            window.opener.location.reload();
+            }
+        });    
+    });
+</script>
+{% endblock %}

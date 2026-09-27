@@ -1,0 +1,4 @@
+from bms.providers import booking_cancellation
+
+def get_booking_cancellation_object_from_booking_code(booking_code):
+    return booking_cancellation.get_booking_cancellation_object_from_booking_code(booking_code)

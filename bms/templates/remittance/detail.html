@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>A2 From</title>
+</head>
+
+<body>
+	<div class="row">
+		<div class="col-md-12">
+			<p style="text-align:center;font-size: 25px;"><strong>Form A2</strong></p>
+			<p style="text-align:center;font-size: 20px;"><strong><u>Application Form-cum-Declaration</u></strong></p>
+			<p style="text-align:center;font-size: 20px;"><strong>(To be completed by the applicant)</strong></p>
+		</div>
+	</div>
+	<table width="100%">
+		<tbody>
+			<tr>
+				<td colspan="6">
+					<p align="left" style="font-size: 10px"><strong>Application for drawn of Foreign Exchange<strong>
+					</p>
+				</td>
+				<td colspan="6" style="font-size: 10px">
+					<p align="right"><strong>Date:- {{ release_req_obj.to_be_released_on }}<strong></p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">I.Details of the applicant/Remitter:-</td>
+			</tr>
+			<tr>
+				<td colspan="12">a. Name : {{ applicant_name }}</td>
+			</tr>
+			<tr>
+				<td colspan="12">b. Address : {{ applicant_address }}</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="8">c. Phone No. : {{ applicant_phone }}</td>
+				<td colspan="4">ID No. : ___________________</td>
+			</tr>
+			<tr>
+				<td colspan="8">d. Email ID : {{ applicant_email }}</td>
+				<td colspan="4">DOB : ____________________</td>
+			</tr>
+			<tr>
+				<td colspan="8">e. PAN : {{ applicant_pan }}</td>
+				<td colspan="4"></td>
+			</tr>
+			<!-- II -->
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>II.Details of the Foreign Exchange required</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="8">
+					<p>1. Foreign Currency Code(FC): <strong>{{organization_bank_account_obj.currency.symbol }}</strong>
+					</p>
+				</td>
+				<td colspan="4">
+					FE amount: <strong>{{ total_fcn_amount }}</strong>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>FCY Amount in Words: <strong>{{ total_fcn_amount_in_words }} only</strong></p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="8">
+					<p>2. Purpose Code ___________</p>
+				</td>
+				<td colspan="4">
+					<p>Purpose Description : {{default_tour_description}}</p>
+				</td>
+			</tr>
+			<!-- III -->
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					III. I authorise you to debit my Saving Bank / Current / RFC / EEFC Account No.
+					______________________________________/give Cheque No._____________ of Rs. ___________together with
+					your charges for
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					*a. Issue a draft (DD): Beneficiary’s Name__________________________________Address
+					__________________________________________
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>*b. Effect the foreign exchange remittance directly (TT):–</p>
+					<ol type="1">
+						<li>
+							<p>Beneficiary’s Name: {{organization_bank_account_obj.holder_name }}</p>
+						</li>
+						<li>
+							<p>Beneficiary’s Address: {% if organization_bank_account_obj.holder_address
+								%}{{organization_bank_account_obj.holder_address }}{% else %}{% endif %}</p>
+						</li>
+						<li>
+							<p>Bank Name : {{organization_bank_account_obj.bank }}</p>
+						</li>
+						<li>
+							<p>Bank Address :
+								{% if organization_bank_account_obj.address1 %}
+								<span>{{organization_bank_account_obj.address1 }},<br></span>
+								{% else %}{% endif %}
+
+								{% if organization_bank_account_obj.address2 %}
+								<span>{{organization_bank_account_obj.address2 }},</span>
+								{% endif %}
+
+								{% if organization_bank_account_obj.city %}
+								<span>{{organization_bank_account_obj.city }},</span>
+								{% endif %}
+
+								{% if organization_bank_account_obj.state %}
+								<span>{{organization_bank_account_obj.state }}</span>
+								{% endif %}
+
+								{% if organization_bank_account_obj.pincode %}
+								<span>-{{organization_bank_account_obj.pincode }}</span>
+								{% endif %}
+							</p>
+						</li>
+						<li>
+							<p>Bank Country: {{organization_bank_account_obj.country }}</p>
+						</li>
+						<li>
+							<p>Bank Account No./IBAN: {{organization_bank_account_obj.number }}</p>
+						</li>
+						<li>
+							<p>
+								Swift Code : {{organization_bank_account_obj.swift_code }}
+							</p>
+						</li>
+						<li>
+							<div class="row">
+								<div class="col-md-6">
+									<p>Sort Code/BSB Code:-___________________________________________________</p>
+								</div>
+								<div class="col-md-6">
+									<p>Transit No./Routing No.___________________________________________________</p>
+								</div>
+							</div>
+						</li>
+						<li>
+							<p>Any Other Required Detail___________________________________________________</p>
+						</li>
+					</ol>
+					</ol>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>IV.Correspondent Bank Charges:</p>
+			<tr>
+				<td colspan="4">
+					<p>_____________ BEN</p>
+				</td>
+				<td colspan="4">
+					<p>_____________ OURS</p>
+				</td>
+				<td colspan="4">
+					<p>_____________ SHARE</p>
+				</td>
+			</tr>
+			</td>
+			</tr>
+			<tr></tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p style="text-align:center;font-size: 20px;"><u><strong>Declaration under FEMA 1999 as per Form
+								A2</strong></u></p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I, {{remitter_name}} (for {{company_name}}), declare that –</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<ol type="1">
+						<li>
+							<p>
+								The total amount of foreign exchange purchased from or remitted through, all sources in
+								India
+								during this calendar year including this application is within the annual limit
+								prescribed by
+								Reserve Bank of India for the said purpose i.e.(USD)_______________________.
+							</p>
+						</li>
+						<li>
+							<p>Foreign exchange purchased from you is for the purpose indicated above.</p>
+						</li>
+					</ol>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12" style="text-align: right;">Signature</td>
+			</tr>
+			<!-- Part 2 Form -->
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<div class="row">
+						<div class="col-md-12">
+							<p align="center" style="color:#4089fb;">
+								<span style="font-size: 20px;"><strong>{{company_name}}</strong></span><br>
+								<span style="text-align:center;font-size: 10px;">Registered Office
+									{{company_address}}</span><br>
+								<span style="text-align:center;font-size: 10px;">
+									CIN No. {{company_cin}} PAN {{company_pan}}</span>
+							</p>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1">
+					<hr style="border: 1px solid red;">
+				</td>
+				<td colspan="3">
+					<img src="" alt="ts_company_logo" width="20%">
+				</td>
+				<td colspan="8">
+					<hr style="border: 1px solid red;">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>Ref ..............</p>
+				</td>
+				<td colspan="6">
+					<p align="right">Date - {{ release_req_obj.to_be_released_on }}</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>
+						The Branch Manager
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					{{ remittance_provider_obj.name }}
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>_____________ Branch</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>Dear Sir/Madam</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>This is to certify and declare that -</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>
+						I/We* {{remitter_name}} (full name of the remitter in block letters), son/daughter of {{
+						remitter_parent_name }}l in the capacity of Director (designation) solemnly declare that the
+						information given below is true to the best of my/our* knowledge and belief and no relevant
+						information has been concealed.
+					</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We declare that we have not made/shall not make the remittance i.e. now applied for through any
+						other authorized person.</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We will ensure during the course of the tour that the remitted amount shall be used for the
+						bonafide purpose for which it has been remitted by the authorized dealer on our behalf and
+						request. I/we further undertake to ensure that the unspent advance remittances if anyshall be
+						repatriated to India and proof thereof will be submitted to the Authorized Dealer within
+						reasonable time. Further I/we undertake to repatriate the advance remit abroad to India within
+						reasonable time in an event if the tour program is cancelled or not executed for any reason what
+						so ever.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We hereby confirm that amount to be remitted is not chargeable to be taxed in India because
+						remittance is being made out of the foreign exchange purchased by the traveller concerned from
+						an Authorized Person (including exchange drawn for private travel abroad) in accordance with the
+						Rules, Regulation and Directions in force. Therefore Form 15CA and Form 15CB as per provisions
+						of Rule 37BB of the Income Tax Rules, 1962 are not required to be submitted. In the event if
+						there is any Income Tax query/inquiry/notice demanding details/information in India in respect
+						of this particular remittance, I/We undertake to provide with all the necessary
+						information/document the amount of remittance has not been deducted or after deduction has not
+						been paid or not paid in full, I/ We* undertake to pay the amount of tax not deducted or not
+						paid, as the case may be, along with Interest due to the tax authorities. I/We* shall also be
+						subject to the provisions of penalty for the said default as per the provision of the Income-tax
+						Act, 1961.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We* further undertake to submit the requisite documents for enabling the Income-tax Authorities
+						to determine the nature and amount of income of the recipient of the above remittance as well as
+						documents required for determining my/our liability under the Income-tax Act, 1961 as a person
+						responsible for deduction of tax at source.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>Further, I/We shall indemnify {{ remittance_provider_obj.name }} for any tax/interest or penalty
+						levied by the Income-tax/Income tax Appellate Authorities/Courts in India for non deduction of
+						tax or non-compliance with the relevant provisions of Income tax law in regards to this
+						remittance.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We declare that we are Travel Agents who are required to remit funds abroad to Overseas Tour
+						Operators for ground arrangements of our customers on behalf of them.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>I/We* further declare that I/We* am/are* furnishing this information in my/our* capacity as and
+						I/We* am/are* also competent to sign the return of Income as per provision of section 140 of the
+						Income-tax Act, 1961 and verify it.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>In terms of Section 10 (4 & 5) of Foreign Exchange Management Act, 1999, I / we hereby declare
+						that the aforesaid bookings involving foreign exchange is in conformity with the provisions of
+						FEMA, 1999 and this bookings will not involve and is not designed for the purpose of any
+						contravention or evasion of provisions of FEMA, 1999 or of any rule, regulation, notification,
+						direction or order made there under.</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>Your's faithfully</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					For,
+				</td>
+			</tr>
+			<tr></tr>
+			<!-- Authorised Signatory -->
+			<tr>
+				<td colspan="12">
+					<p>Authorised Signatory</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					{{ remitter_name }} (Name of Authorized signatory)
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>{{ remitter_pan}}</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>(Copy of PAN and Address proof of remitter required)</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>*Delete whichever is not applicable</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>List of Traveler's/Clients traveling to {{organization_bank_account_obj.country.name }} for whom
+						this bookings is being undertaken</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			<!-- Table Headers -->
+			<tr>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Sr. No.
+				</td>
+				<td colspan="3"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Name of passenger
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Passport No.
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Issue At
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Expiry Date
+				</td>
+				<td colspan="3"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					FCN Amount in TC/Cash
+				</td>
+				<td colspan="2"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					Pan Card No.
+				</td>
+			</tr>
+			<!-- passenger dict -->
+			{% for j in passenger_details %}
+			<tr>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ forloop.counter }}
+				</td>
+				<td colspan="3"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.passenger_name }}
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.passport_number }}
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.issue_at }}
+				</td>
+				<td colspan="1"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.expiry_date}}
+				</td>
+				<td colspan="3"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.fcn_amount }} {{ organization_bank_account_obj.currency.symbol }}
+				</td>
+				<td colspan="2"
+					style="border: 1px solid black; text-align: center; vertical-align: middle;padding-top: 2px;">
+					{{ j.pan_card_number }}
+				</td>
+			</tr>
+			{% endfor %}
+			<!-- after table content -->
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>For {{ company_name }}</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			<tr></tr>
+			<tr>
+				<td colspan="12">
+					<p>Name: {{ remitter_name }}</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>Designation: Director</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>Please Tick ( ) mark on Enclosed Documents:--</p>
+				</td>
+			</tr>
+			<tr></tr>
+			<tr>
+				<td colspan="3">
+					___ Pan Card
+				</td>
+				<td colspan="3">
+					<p>___ Driving License</p>
+				</td>
+				<td colspan="3">
+					<p>___ Passport</p>
+				</td>
+				<td colspan="3">
+					<p>___ Other Id</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>___ Offer Letter from University or College</p>
+				</td>
+				<td colspan="6">
+					<p>Letter from Hospital or Director</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>___ Vendor Invoice</p>
+				</td>
+				<td>
+					<p>___ CA Certifidate</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>Any Other Declaration/Letter By The Applicant:- (Please Specify)</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>1.</p>
+				</td>
+				<td colspan="6">
+					<p>2.</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>3.</p>
+				</td>
+				<td colspan="6">
+					<p>4.</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="12">
+					<p>(To Be Filled By {{ remittance_provider_obj.name }}Employee (Mandatory))</p>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="6">Name of the Emplyee</td>
+				<td colspan="6">Seal and Stamp of Company</td>
+			</tr>
+			<tr>
+				<td colspan="6">
+					<p>Employee Code</p>
+				</td>
+				<td colspan="6">
+					<p>Designation</p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+
+</html>
